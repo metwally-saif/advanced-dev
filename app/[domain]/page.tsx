@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import BlurImage from "@/components/blur-image";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";
 import BlogCard from "@/components/blog-card";
-import { getPostsForSite, getSiteData } from "@/lib/fetchers";
+import { getMoviesForSite, getSiteData } from "@/lib/fetchers";
 import Image from "next/image";
 import db from "@/lib/db";
 
@@ -17,6 +17,9 @@ export async function generateStaticParams() {
     },
   });
 
+  const mainDomain = {
+    domain: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
+  };
   const allPaths = allSites
     .flatMap(({ subdomain, customDomain }) => [
       subdomain && {
@@ -28,7 +31,7 @@ export async function generateStaticParams() {
     ])
     .filter(Boolean);
 
-  return allPaths;
+  return [mainDomain, ...allPaths];
 }
 
 export default async function SiteHomePage({
@@ -39,7 +42,7 @@ export default async function SiteHomePage({
   const domain = decodeURIComponent(params.domain);
   const [data, posts] = await Promise.all([
     getSiteData(domain),
-    getPostsForSite(domain),
+    getMoviesForSite(domain),
   ]);
 
   if (!data) {
@@ -51,7 +54,7 @@ export default async function SiteHomePage({
       <div className="mb-20 w-full">
         {posts.length > 0 ? (
           <div className="mx-auto w-full max-w-screen-xl md:mb-28 lg:w-5/6">
-            <Link href={`/${posts[0].slug}`}>
+            <Link href={`/app/${posts[0].slug}`}>
               <div className="group relative mx-auto h-80 w-full overflow-hidden sm:h-150 lg:rounded-xl">
                 <BlurImage
                   alt={posts[0].title ?? ""}

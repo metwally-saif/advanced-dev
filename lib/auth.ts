@@ -22,11 +22,6 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  pages: {
-    signIn: `/login`,
-    verifyRequest: `/login`,
-    error: "/login", // Error code passed in query string as ?error=
-  },
   adapter: DrizzleAdapter(db, {
     usersTable: users,
     accountsTable: accounts,
@@ -43,7 +38,7 @@ export const authOptions: NextAuthOptions = {
         path: "/",
         // When working on localhost, the cookie domain must be omitted entirely (https://stackoverflow.com/a/1188145)
         domain: VERCEL_DEPLOYMENT
-          ? `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
+          ? `${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
           : undefined,
         secure: VERCEL_DEPLOYMENT,
       },
@@ -66,6 +61,19 @@ export const authOptions: NextAuthOptions = {
       };
       return session;
     },
+    redirect: async ({ url, baseUrl } : { url :string, baseUrl: string}) => {
+          // If the user is already on the app, maintain the URL
+    if (url.startsWith(baseUrl)) {
+      // Default is to return to homepage after login
+      if (url.includes("/login")) {
+        return `${baseUrl}/app`;  // Or whatever default post-login path
+      }
+      return url;
+    }
+    // Otherwise, redirect to dashboard
+    return `${baseUrl}/app`;
+  },
+  
   },
 };
 

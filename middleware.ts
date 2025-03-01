@@ -20,7 +20,7 @@ export default async function middleware(req: NextRequest) {
   // Get hostname of request (e.g. demo.vercel.pub, demo.localhost:3000)
   let hostname = req.headers
     .get("host")!
-    .replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
+    .replace("localhost:3000", `${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
 
   // special case for Vercel preview deployment URLs
   if (
@@ -38,25 +38,43 @@ export default async function middleware(req: NextRequest) {
     searchParams.length > 0 ? `?${searchParams}` : ""
   }`;
 
-  // rewrites for app pages
-  if (hostname == `app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
-    const session = await getToken({ req });
-    if (!session && path !== "/login") {
-      return NextResponse.redirect(new URL("/login", req.url));
-    } else if (session && path == "/login") {
-      return NextResponse.redirect(new URL("/", req.url));
+  if (hostname === "localhost:3000" || hostname === process.env.NEXT_PUBLIC_ROOT_DOMAIN) {
+
+    if (path.startsWith("/posts/")) {
+      // Let it pass through to the /posts/[slug] route
+      return NextResponse.next();
     }
-    return NextResponse.rewrite(
-      new URL(`/app${path === "/" ? "" : path}`, req.url),
-    );
+    // App routes - accessed directly without subdomain
+    if (path.startsWith("/app")) {
+      const session = await getToken({ req });
+      if (!session && !path.startsWith("/app/login")) {
+        return NextResponse.redirect(new URL("/app/login", req.url));
+      } else if (session && path === "/app/login") {
+        return NextResponse.redirect(new URL("/app", req.url));
+      }
+      return NextResponse.rewrite(
+        new URL(`/app${path === "/app" ? "" : path.substring(4)}`, req.url)
+      );
+    }
+        // Site routes - using /site/[subdomain] pattern
+        if (path.startsWith("/site/") && path.split("/").length > 2) {
+          const sitePath = path.split("/");
+          const subdomain = sitePath[2];
+          const rest = sitePath.slice(3).join("/");
+          return NextResponse.rewrite(
+            new URL(`/${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/${rest}`, req.url)
+          );
+        }
+            // Root path handling
+    if (path === "/") {
+      return NextResponse.rewrite(new URL(`/home`, req.url));
+    }
+    
+    // Let all other paths pass through normally
+    return NextResponse.next();
   }
 
-  // special case for `vercel.pub` domain
-  if (hostname === "vercel.pub") {
-    return NextResponse.redirect(
-      "https://vercel.com/blog/platforms-starter-kit",
-    );
-  }
+        
 
   // rewrite root application to `/home` folder
   if (

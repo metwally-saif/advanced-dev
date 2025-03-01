@@ -13,7 +13,7 @@ import { customAlphabet } from "nanoid";
 import { revalidateTag } from "next/cache";
 import { withPostAuth, withSiteAuth } from "./auth";
 import db from "./db";
-import { SelectPost, SelectSite, posts, sites, users } from "./schema";
+import { SelectPost, SelectSite, Movies, sites, users } from "./schema";
 
 const nanoid = customAlphabet(
   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
@@ -43,7 +43,7 @@ export const createSite = async (formData: FormData) => {
       .returning();
 
     revalidateTag(
-      `${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
+      ` ${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
     );
     return response;
   } catch (error: any) {
@@ -209,19 +209,8 @@ export const deleteSite = withSiteAuth(
   },
 );
 
-export const getSiteFromPostId = async (postId: string) => {
-  const post = await db.query.posts.findFirst({
-    where: eq(posts.id, postId),
-    columns: {
-      siteId: true,
-    },
-  });
-
-  return post?.siteId;
-};
-
 export const createPost = withSiteAuth(
-  async (_: FormData, site: SelectSite) => {
+  async (_: FormData) => {
     const session = await getSession();
     if (!session?.user.id) {
       return {
@@ -230,17 +219,15 @@ export const createPost = withSiteAuth(
     }
 
     const [response] = await db
-      .insert(posts)
+      .insert(Movies)
       .values({
-        siteId: site.id,
         userId: session.user.id,
       })
       .returning();
 
     revalidateTag(
-      `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
+      `${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
     );
-    site.customDomain && revalidateTag(`${site.customDomain}-posts`);
 
     return response;
   },
@@ -255,11 +242,8 @@ export const updatePost = async (data: SelectPost) => {
     };
   }
 
-  const post = await db.query.posts.findFirst({
-    where: eq(posts.id, data.id),
-    with: {
-      site: true,
-    },
+  const post = await db.query.Movies.findFirst({
+    where: eq(Movies.id, data.id)
   });
 
   if (!post || post.userId !== session.user.id) {
@@ -270,26 +254,15 @@ export const updatePost = async (data: SelectPost) => {
 
   try {
     const [response] = await db
-      .update(posts)
+      .update(Movies)
       .set({
         title: data.title,
         description: data.description,
         content: data.content,
       })
-      .where(eq(posts.id, data.id))
+      .where(eq(Movies.id, data.id))
       .returning();
 
-    revalidateTag(
-      `${post.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
-    );
-    revalidateTag(
-      `${post.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
-    );
-
-    // if the site has a custom domain, we need to revalidate those tags too
-    post.site?.customDomain &&
-      (revalidateTag(`${post.site?.customDomain}-posts`),
-      revalidateTag(`${post.site?.customDomain}-${post.slug}`));
 
     return response;
   } catch (error: any) {
@@ -321,21 +294,21 @@ export const updatePostMetadata = withPostAuth(
 
         const blurhash = await getBlurDataURL(url);
         response = await db
-          .update(posts)
+          .update(Movies)
           .set({
             image: url,
             imageBlurhash: blurhash,
           })
-          .where(eq(posts.id, post.id))
+          .where(eq(Movies.id, post.id))
           .returning()
           .then((res) => res[0]);
       } else {
         response = await db
-          .update(posts)
+          .update(Movies)
           .set({
             [key]: key === "published" ? value === "true" : value,
           })
-          .where(eq(posts.id, post.id))
+          .where(eq(Movies.id, post.id))
           .returning()
           .then((res) => res[0]);
       }
@@ -371,10 +344,10 @@ export const deletePost = withPostAuth(
   async (_: FormData, post: SelectPost) => {
     try {
       const [response] = await db
-        .delete(posts)
-        .where(eq(posts.id, post.id))
+        .delete(Movies)
+        .where(eq(Movies.id, post.id))
         .returning({
-          siteId: posts.siteId,
+          slug: Movies.slug,
         });
 
       return response;

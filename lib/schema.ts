@@ -138,7 +138,7 @@ export const sites = pgTable(
   },
 );
 
-export const posts = pgTable(
+export const Movies = pgTable(
   "posts",
   {
     id: text("id")
@@ -161,10 +161,6 @@ export const posts = pgTable(
       .notNull()
       .$onUpdate(() => new Date()),
     published: boolean("published").default(false).notNull(),
-    siteId: text("siteId").references(() => sites.id, {
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    }),
     userId: text("userId").references(() => users.id, {
       onDelete: "cascade",
       onUpdate: "cascade",
@@ -172,20 +168,17 @@ export const posts = pgTable(
   },
   (table) => {
     return {
-      siteIdIdx: index().on(table.siteId),
       userIdIdx: index().on(table.userId),
-      slugSiteIdKey: uniqueIndex().on(table.slug, table.siteId),
     };
   },
 );
 
-export const postsRelations = relations(posts, ({ one }) => ({
-  site: one(sites, { references: [sites.id], fields: [posts.siteId] }),
-  user: one(users, { references: [users.id], fields: [posts.userId] }),
+export const postsRelations = relations(Movies, ({ one }) => ({
+  user: one(users, { references: [users.id], fields: [Movies.userId] }),
 }));
 
 export const sitesRelations = relations(sites, ({ one, many }) => ({
-  posts: many(posts),
+  posts: many(Movies),
   user: one(users, { references: [users.id], fields: [sites.userId] }),
 }));
 
@@ -201,9 +194,9 @@ export const userRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   sessions: many(sessions),
   sites: many(sites),
-  posts: many(posts),
+  posts: many(Movies),
 }));
 
 export type SelectSite = typeof sites.$inferSelect;
-export type SelectPost = typeof posts.$inferSelect;
+export type SelectPost = typeof Movies.$inferSelect;
 export type SelectExample = typeof examples.$inferSelect;

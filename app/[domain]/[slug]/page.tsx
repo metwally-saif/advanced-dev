@@ -1,12 +1,11 @@
 import { notFound } from "next/navigation";
-import { getPostData, getSiteData } from "@/lib/fetchers";
+import { getMovieData } from "@/lib/fetchers";
 import BlogCard from "@/components/blog-card";
 import BlurImage from "@/components/blur-image";
 import MDX from "@/components/mdx";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";
 import db from "@/lib/db";
-import { posts, sites } from "@/lib/schema";
-import { eq } from "drizzle-orm";
+import { Movies } from "@/lib/schema";
 
 export async function generateMetadata({
   params,
@@ -15,12 +14,10 @@ export async function generateMetadata({
 }) {
   const domain = decodeURIComponent(params.domain);
   const slug = decodeURIComponent(params.slug);
+  const data = await getMovieData(slug)
+  console.log("data", data)
 
-  const [data, siteData] = await Promise.all([
-    getPostData(domain, slug),
-    getSiteData(domain),
-  ]);
-  if (!data || !siteData) {
+  if (!data) {
     return null;
   }
   const { title, description } = data;
@@ -51,25 +48,15 @@ export async function generateMetadata({
 export async function generateStaticParams() {
   const allPosts = await db
     .select({
-      slug: posts.slug,
-      site: {
-        subdomain: sites.subdomain,
-        customDomain: sites.customDomain,
-      },
+      slug: Movies.slug
     })
-    .from(posts)
-    .leftJoin(sites, eq(posts.siteId, sites.id))
-    .where(eq(sites.subdomain, "demo")); // feel free to remove this filter if you want to generate paths for all posts
+    .from(Movies)
 
   const allPaths = allPosts
-    .flatMap(({ site, slug }) => [
-      site?.subdomain && {
-        domain: `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`,
-        slug,
-      },
-      site?.customDomain && {
-        domain: site.customDomain,
-        slug,
+    .flatMap(({ slug }) => [
+      slug && {
+        domain: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
+        slug: slug,
       },
     ])
     .filter(Boolean);
@@ -84,7 +71,7 @@ export default async function SitePostPage({
 }) {
   const domain = decodeURIComponent(params.domain);
   const slug = decodeURIComponent(params.slug);
-  const data = await getPostData(domain, slug);
+  const data = await getMovieData(slug);
 
   if (!data) {
     notFound();
@@ -95,7 +82,7 @@ export default async function SitePostPage({
       <div className="flex flex-col items-center justify-center">
         <div className="m-auto w-full text-center md:w-7/12">
           <p className="m-auto my-5 w-10/12 text-sm font-light text-stone-500 md:text-base dark:text-stone-400">
-            {toDateString(data.createdAt)}
+            {toDateString(data.createdAt ?? new Date())}
           </p>
           <h1 className="mb-10 font-title text-3xl font-bold text-stone-800 md:text-6xl dark:text-white">
             {data.title}
@@ -104,36 +91,6 @@ export default async function SitePostPage({
             {data.description}
           </p>
         </div>
-        <a
-          // if you are using Github OAuth, you can get rid of the Twitter option
-          href={
-            data.site?.user?.username
-              ? `https://twitter.com/${data.site.user.username}`
-              : `https://github.com/${data.site?.user?.gh_username}`
-          }
-          rel="noreferrer"
-          target="_blank"
-        >
-          <div className="my-8">
-            <div className="relative inline-block h-8 w-8 overflow-hidden rounded-full align-middle md:h-12 md:w-12">
-              {data.site?.user?.image ? (
-                <BlurImage
-                  alt={data.site?.user?.name ?? "User Avatar"}
-                  height={80}
-                  src={data.site.user.image}
-                  width={80}
-                />
-              ) : (
-                <div className="absolute flex h-full w-full select-none items-center justify-center bg-stone-100 text-4xl text-stone-500">
-                  ?
-                </div>
-              )}
-            </div>
-            <div className="text-md ml-3 inline-block align-middle md:text-lg dark:text-white">
-              by <span className="font-semibold">{data.site?.user?.name}</span>
-            </div>
-          </div>
-        </a>
       </div>
       <div className="relative m-auto mb-10 h-80 w-full max-w-screen-lg overflow-hidden md:mb-20 md:h-150 md:w-5/6 md:rounded-2xl lg:w-2/3">
         <BlurImage
