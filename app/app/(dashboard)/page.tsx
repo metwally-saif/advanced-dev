@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Sites from "@/components/sites";
 import OverviewStats from "@/components/overview-stats";
-import Posts from "@/components/posts";
+import Movies from "@/components/movies";
 import Link from "next/link";
 import PlaceholderCard from "@/components/placeholder-card";
 import OverviewSitesCTA from "@/components/overview-sites-cta";
@@ -51,7 +51,7 @@ export default function Overview() {
             </div>
           }
         >
-          <Posts limit={8} />
+          <Movies limit={8} />
         </Suspense>
       </div>
     </div>

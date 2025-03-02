@@ -1,6 +1,6 @@
 import { getSession } from "@/lib/auth";
 import { notFound, redirect } from "next/navigation";
-import Posts from "@/components/posts";
+import Movies from "@/components/movies";
 import CreatePostButton from "@/components/create-post-button";
 import db from "@/lib/db";
 
@@ -45,7 +45,7 @@ export default async function SitePosts({
         </div>
         <CreatePostButton />
       </div>
-      <Posts siteId={decodeURIComponent(params.id)} />
+      <Movies siteId={decodeURIComponent(params.id)} />
     </>
   );
 }

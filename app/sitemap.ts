@@ -1,14 +1,14 @@
 import { headers } from "next/headers";
-import { getMoviesForSite } from "@/lib/fetchers";
+import { getHomePageMovies } from "@/lib/fetchers";
 
 export default async function Sitemap() {
   const headersList = headers();
   const domain =
     headersList
       .get("host")
-      ?.replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)  ?? "";
+      ?.replace("localhost:3000", `${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)  ?? "";
 
-  const posts = await getMoviesForSite(domain);
+  const posts = await getHomePageMovies();
 
   return [
     {

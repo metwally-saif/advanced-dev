@@ -25,7 +25,7 @@ export async function getSiteData(siteIdentifier: string) {
   )();
 }
 
-export async function getMoviesForSite(siteId: string) {
+export async function getHomePageMovies() {
   return await unstable_cache(
     async () => {
       return await db
@@ -45,10 +45,10 @@ export async function getMoviesForSite(siteId: string) {
         )
         .orderBy(desc(Movies.createdAt));
     },
-    [`site-${siteId}-posts`],
+    [`movies-for-site`],
     {
       revalidate: 900,
-      tags: [`site-${siteId}-posts`],
+      tags: [`movies-for-site`],
     },
   )();
 }
