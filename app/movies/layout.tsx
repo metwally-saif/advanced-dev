@@ -28,11 +28,9 @@ export async function generateMetadata({
   };
 }
 
-export default async function SiteLayout({
-  params,
+export default async function MainLayout({
   children,
 }: {
-  params: { domain: string };
   children: ReactNode;
 }) {
 

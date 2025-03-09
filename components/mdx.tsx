@@ -27,7 +27,7 @@ export default function MDX({ source }: { source: MDXRemoteProps }) {
 }
 
 interface ExampleCardProps
-  extends Pick<SelectMovie, "description" | "image" | "imageBlurhash"> {
+  extends Pick<SelectMovie, "description" | "image" > {
   name: string | null;
   url: string | null;
 }
@@ -55,8 +55,6 @@ function ExamplesCard({ data }: { data: ExampleCardProps }) {
             height={400}
             className="h-64 w-full object-cover"
             src={data.image ?? "/placeholder.png"}
-            placeholder="blur"
-            blurDataURL={data.imageBlurhash ?? undefined}
           />
         </div>
         <div className="h-36 px-5 py-6">
@@ -76,8 +74,6 @@ function ExamplesCard({ data }: { data: ExampleCardProps }) {
             height={400}
             className="h-full object-cover"
             src={`/examples/${data.image}`}
-            placeholder="blur"
-            blurDataURL={data.imageBlurhash ?? undefined}
           />
         </div>
         <div className="w-3/5 px-5 py-6">

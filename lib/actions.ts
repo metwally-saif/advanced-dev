@@ -5,7 +5,7 @@ import { put } from "@vercel/blob";
 import { eq } from "drizzle-orm";
 import { customAlphabet } from "nanoid";
 import { revalidateTag } from "next/cache";
-import { withPostAuth, withSiteAuth } from "./auth";
+import { withMovieAuth } from "./auth";
 import db from "./db";
 import { SelectMovie, Movies, users, actor, SelectActor, director, SelectDirector, reviews, SelectReview } from "./schema";
 
@@ -16,7 +16,7 @@ const nanoid = customAlphabet(
 
 
 
-export const createMovie = withSiteAuth(
+export const createMovie = 
   async (_: FormData) => {
     const session = await getSession();
     if (!session?.user.id) {
@@ -37,8 +37,8 @@ export const createMovie = withSiteAuth(
     );
 
     return response;
-  },
-);
+  };
+
 
 // creating a separate function for this because we're not using FormData
 export const updateMovie = async (data: SelectMovie) => {
@@ -79,7 +79,7 @@ export const updateMovie = async (data: SelectMovie) => {
   }
 };
 
-export const updateMovieMetadata = withPostAuth(
+export const updateMovieMetadata = withMovieAuth(
   async (
     formData: FormData,
     post: SelectMovie,
@@ -132,7 +132,7 @@ export const updateMovieMetadata = withPostAuth(
   },
 );
 
-export const deleteMovie = withPostAuth(
+export const deleteMovie = withMovieAuth(
   async (_: FormData, post: SelectMovie) => {
     try {
       const [response] = await db

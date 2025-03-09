@@ -1,7 +1,4 @@
-import BlurImage from "@/components/blur-image";
-import type { SelectMovie } from "@/lib/schema";
-import { placeholderBlurhash, random } from "@/lib/utils";
-import { BarChart, ExternalLink } from "lucide-react";
+import type { SelectMovie } from "@/lib/schema";;
 import Link from "next/link";
 
 export default function MovieCard({
@@ -9,12 +6,13 @@ export default function MovieCard({
 }: {
   data: SelectMovie;
 }) {
-  const url = `/movies/${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/${data.slug}`;
+  const url = `/movies/${data.slug}`;
+  console.log(data);
 
   return (
     <div className="relative rounded-lg border border-stone-200 pb-10 shadow-md transition-all hover:shadow-xl dark:border-stone-700 dark:hover:border-white">
       <Link
-        href={`/app/post/${data.id}`}
+        href={`/app/movie/${data.id}`}
         className="flex flex-col overflow-hidden rounded-lg"
       >
         <div className="relative h-44 overflow-hidden">

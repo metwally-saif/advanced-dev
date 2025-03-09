@@ -1,15 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import BlurImage from "@/components/blur-image";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";
 import MovieCard from "@/components/blog-card";
 import { getHomePageMovies } from "@/lib/fetchers";
 import Image from "next/image";
-import db from "@/lib/db";
 
 
 
-export default async function SiteHomePage() {
+export default async function HomePage() {
   const movieData = await getHomePageMovies()
 
   if (!movieData) {

@@ -35,7 +35,6 @@ export async function getHomePageMovies() {
 }
 
 export async function getMovieData(slug: string) {
-  console.log("slug", slug);
   return await unstable_cache(
     async () => {
       const data = await db

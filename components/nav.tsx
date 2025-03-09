@@ -3,12 +3,10 @@
 import Link from "next/link";
 import {
   ArrowLeft,
-  BarChart3,
   Edit3,
   Film,
   LayoutDashboard,
   Menu,
-  Newspaper,
   Settings,
 } from "lucide-react";
 import {
@@ -23,53 +21,27 @@ export default function Nav({ children }: { children: ReactNode }) {
   const segments = useSelectedLayoutSegments();
   const { id } = useParams() as { id?: string };
 
-  const [siteId, setSiteId] = useState<string | null>();
 
 
 
   const tabs = useMemo(() => {
-    if (segments[0] === "site" && id) {
+
+    if (segments[0] === "movie" && id) {
       return [
         {
-          name: "Back to All Sites",
-          href: "/sites",
-          icon: <ArrowLeft width={18} />,
-        },
-        {
-          name: "Posts",
-          href: `/site/${id}`,
-          isActive: segments.length === 2,
-          icon: <Newspaper width={18} />,
-        },
-        {
-          name: "Analytics",
-          href: `/site/${id}/analytics`,
-          isActive: segments.includes("analytics"),
-          icon: <BarChart3 width={18} />,
-        },
-        {
-          name: "Settings",
-          href: `/site/${id}/settings`,
-          isActive: segments.includes("settings"),
-          icon: <Settings width={18} />,
-        },
-      ];
-    } else if (segments[0] === "post" && id) {
-      return [
-        {
-          name: "Back to All Posts",
-          href: siteId ? `/site/${siteId}` : "/sites",
+          name: "Back to All Movies",
+          href: "/movies",
           icon: <ArrowLeft width={18} />,
         },
         {
           name: "Editor",
-          href: `/post/${id}`,
+          href: `/movie/${id}`,
           isActive: segments.length === 2,
           icon: <Edit3 width={18} />,
         },
         {
           name: "Settings",
-          href: `/post/${id}/settings`,
+          href: `/movie/${id}/settings`,
           isActive: segments.includes("settings"),
           icon: <Settings width={18} />,
         },
@@ -95,29 +67,28 @@ export default function Nav({ children }: { children: ReactNode }) {
         icon: <Settings width={18} />,
       },
     ];
-  }, [segments, id, siteId]);
+  }, [segments, id]);
 
   const [showSidebar, setShowSidebar] = useState(false);
 
   const pathname = usePathname();
 
   useEffect(() => {
-    // hide sidebar on path change
     setShowSidebar(false);
   }, [pathname]);
 
   return (
     <>
       <button
-        className={`fixed z-20 ${
-          // left align for Editor, right align for other pages
-          segments[0] === "post" && segments.length === 2 && !showSidebar
+      type="button"
+        className={`fixed z-20 ${          
+          segments[0] === "movie" && segments.length === 2 && !showSidebar
             ? "left-5 top-5"
             : "right-5 top-7"
         } sm:hidden`}
         onClick={() => setShowSidebar(!showSidebar)}
       >
-        <Menu width={20} />
+        {""}<Menu width={20} />
       </button>
       <div
         className={`transform ${
@@ -126,29 +97,9 @@ export default function Nav({ children }: { children: ReactNode }) {
       >
         <div className="grid gap-2">
           <div className="flex items-center space-x-2 rounded-lg px-2 py-1.5">
-            <a
-              href="https://vercel.com/templates/next.js/platforms-starter-kit"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-lg p-1.5 hover:bg-stone-200 dark:hover:bg-stone-700"
-            >
-              <svg
-                width="26"
-                viewBox="0 0 76 65"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="text-black dark:text-white"
-              >
-                <path
-                  d="M37.5274 0L75.0548 65H0L37.5274 0Z"
-                  fill="currentColor"
-                />
-              </svg>
-            </a>
-            <div className="h-6 rotate-[30deg] border-l border-stone-400 dark:border-stone-500" />
             <Link
               href="/"
-              className="rounded-lg p-2 hover:bg-stone-200 dark:hover:bg-stone-700"
+              className="rounded-lg hover:bg-stone-200 dark:hover:bg-stone-700"
             >
               <Image
                 src="/logo.png"
