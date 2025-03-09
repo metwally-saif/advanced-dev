@@ -1,15 +1,15 @@
 import BlurImage from "@/components/blur-image";
-import type { SelectPost, SelectSite } from "@/lib/schema";
+import type { SelectMovie } from "@/lib/schema";
 import { placeholderBlurhash, random } from "@/lib/utils";
 import { BarChart, ExternalLink } from "lucide-react";
 import Link from "next/link";
 
-export default function PostCard({
+export default function MovieCard({
   data,
 }: {
-  data: SelectPost;
+  data: SelectMovie;
 }) {
-  const url = `/posts/${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/${data.slug}`;
+  const url = `/movies/${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/${data.slug}`;
 
   return (
     <div className="relative rounded-lg border border-stone-200 pb-10 shadow-md transition-all hover:shadow-xl dark:border-stone-700 dark:hover:border-white">
@@ -18,15 +18,6 @@ export default function PostCard({
         className="flex flex-col overflow-hidden rounded-lg"
       >
         <div className="relative h-44 overflow-hidden">
-          <BlurImage
-            alt={data.title ?? "Card thumbnail"}
-            width={500}
-            height={400}
-            className="h-full object-cover"
-            src={data.image ?? "/placeholder.png"}
-            placeholder="blur"
-            blurDataURL={data.imageBlurhash ?? placeholderBlurhash}
-          />
           {!data.published && (
             <span className="absolute bottom-2 right-2 rounded-md border border-stone-200 bg-white px-3 py-0.5 text-sm font-medium text-stone-600 shadow-md">
               Draft

@@ -6,9 +6,9 @@ import { Metadata } from "next";
 import { cn } from "@/lib/utils";
 
 const title =
-  "Platforms Starter Kit – The all-in-one starter kit for building multi-tenant applications.";
+  "Movies database with Next.js, Prisma, and PostgreSQL";
 const description =
-  "The Platforms Starter Kit is a full-stack Next.js app with multi-tenancy and custom domain support. Built with Next.js App Router, Vercel Postgres and the Vercel Domains API.";
+  "movies database with authentication, CRUD operations, and analytics. Built by Saif";
 const image = "https://vercel.pub/thumbnail.png";
 
 export const metadata: Metadata = {

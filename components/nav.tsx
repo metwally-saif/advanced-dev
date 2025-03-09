@@ -5,7 +5,7 @@ import {
   ArrowLeft,
   BarChart3,
   Edit3,
-  Globe,
+  Film,
   LayoutDashboard,
   Menu,
   Newspaper,
@@ -17,7 +17,6 @@ import {
   useSelectedLayoutSegments,
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { getSiteFromPostId } from "@/lib/actions";
 import Image from "next/image";
 
 export default function Nav({ children }: { children: ReactNode }) {
@@ -26,13 +25,7 @@ export default function Nav({ children }: { children: ReactNode }) {
 
   const [siteId, setSiteId] = useState<string | null>();
 
-  useEffect(() => {
-    if (segments[0] === "post" && id) {
-      getSiteFromPostId(id).then((id) => {
-        setSiteId(id);
-      });
-    }
-  }, [segments, id]);
+
 
   const tabs = useMemo(() => {
     if (segments[0] === "site" && id) {
@@ -90,10 +83,10 @@ export default function Nav({ children }: { children: ReactNode }) {
         icon: <LayoutDashboard width={18} />,
       },
       {
-        name: "Sites",
-        href: "/sites",
-        isActive: segments[0] === "sites",
-        icon: <Globe width={18} />,
+        name: "Movies",
+        href: "/movies",
+        isActive: segments[0] === "movies",
+        icon: <Film width={18} />,
       },
       {
         name: "Settings",

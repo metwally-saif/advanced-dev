@@ -1,29 +1,9 @@
 import { unstable_cache } from "next/cache";
 import db from "./db";
-import { and, desc, eq, not } from "drizzle-orm";
-import { Movies, sites, users } from "./schema";
+import { and, desc, eq } from "drizzle-orm";
+import { Movies, users } from "./schema";
 import { serialize } from "next-mdx-remote/serialize";
-import { replaceExamples, replaceTweets } from "@/lib/remark-plugins";
 
-// Modified functions to work with a single domain
-
-export async function getSiteData(siteIdentifier: string) {
-  return await unstable_cache(
-    async () => {
-      return await db.query.sites.findFirst({
-        where: eq(sites.id, siteIdentifier),
-        with: {
-          user: true,
-        },
-      });
-    },
-    [`site-${siteIdentifier}-metadata`],
-    {
-      revalidate: 900,
-      tags: [`site-${siteIdentifier}-metadata`],
-    },
-  )();
-}
 
 export async function getHomePageMovies() {
   return await unstable_cache(
@@ -34,10 +14,11 @@ export async function getHomePageMovies() {
           description: Movies.description,
           slug: Movies.slug,
           image: Movies.image,
-          imageBlurhash: Movies.imageBlurhash,
           createdAt: Movies.createdAt,
+          user: users,
         })
         .from(Movies)
+        .leftJoin(users, eq(Movies.userId, users.id))
         .where(
           and(
             eq(Movies.published, true),
@@ -93,7 +74,6 @@ export async function getMovieData(slug: string) {
             createdAt: Movies.createdAt,
             description: Movies.description,
             image: Movies.image,
-            imageBlurhash: Movies.imageBlurhash,
           })
           .from(Movies)
           .where(
@@ -124,9 +104,7 @@ async function getMdxSource(postContents: string) {
     postContents?.replaceAll(/<(https?:\/\/\S+)>/g, "[$1]($1)") ?? "";
   // Serialize the content string into MDX
   const mdxSource = await serialize(content, {
-    mdxOptions: {
-      remarkPlugins: [replaceTweets, () => replaceExamples(db)],
-    },
+
   });
 
   return mdxSource;

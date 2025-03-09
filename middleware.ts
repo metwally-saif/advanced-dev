@@ -40,10 +40,7 @@ export default async function middleware(req: NextRequest) {
 
   if (hostname === "localhost:3000" || hostname === process.env.NEXT_PUBLIC_ROOT_DOMAIN) {
 
-    if (path.startsWith("/posts/")) {
-      // Let it pass through to the /posts/[slug] route
-      return NextResponse.next();
-    }
+
     // App routes - accessed directly without subdomain
     if (path.startsWith("/app")) {
       const session = await getToken({ req });
@@ -56,20 +53,7 @@ export default async function middleware(req: NextRequest) {
         new URL(`/app${path === "/app" ? "" : path.substring(4)}`, req.url)
       );
     }
-        // Site routes - using /site/[subdomain] pattern
-        if (path.startsWith("/site/") && path.split("/").length > 2) {
-          const sitePath = path.split("/");
-          const subdomain = sitePath[2];
-          const rest = sitePath.slice(3).join("/");
-          return NextResponse.rewrite(
-            new URL(`/${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/${rest}`, req.url)
-          );
-        }
-            // Root path handling
-    if (path === "/") {
-      return NextResponse.rewrite(new URL(`/home`, req.url));
-    }
-    
+
     // Let all other paths pass through normally
     return NextResponse.next();
   }

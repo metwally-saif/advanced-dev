@@ -1,18 +1,18 @@
 import Link from "next/link";
 import BlurImage from "./blur-image";
-import { placeholderBlurhash, toDateString } from "@/lib/utils";
-import type { SelectPost } from "@/lib/schema";
+import { toDateString } from "@/lib/utils";
+import type { SelectMovie } from "@/lib/schema";
 
-interface BlogCardProps {
+interface MovieCardProps {
   data: Pick<
-    SelectPost,
-    "slug" | "image" | "imageBlurhash" | "title" | "description" | "createdAt"
+    SelectMovie,
+    "slug" | "image" | "title" | "description" | "createdAt"
   >;
 }
 
-export default function BlogCard({ data }: BlogCardProps) {
+export default function MovieCard({ data }: MovieCardProps) {
   return (
-    <Link href={`/app/${data.slug}`}>
+    <Link href={`/movies/${data.slug}`}>
       <div className="ease overflow-hidden rounded-2xl border-2 border-stone-100 bg-white shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-xl dark:border-stone-800">
         <BlurImage
           src={data.image!}
@@ -20,8 +20,6 @@ export default function BlogCard({ data }: BlogCardProps) {
           width={500}
           height={400}
           className="h-64 w-full object-cover"
-          placeholder="blur"
-          blurDataURL={data.imageBlurhash ?? placeholderBlurhash}
         />
         <div className="h-36 border-t border-stone-200 px-5 py-8 dark:border-stone-700 dark:bg-black">
           <h3 className="font-title text-xl tracking-wide dark:text-white">

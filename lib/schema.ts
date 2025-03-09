@@ -6,19 +6,29 @@ import {
   integer,
   pgTable,
   primaryKey,
-  serial,
   text,
+  pgEnum,
   timestamp,
-  uniqueIndex,
 } from "drizzle-orm/pg-core";
+
+export const genres = pgEnum("genres", [
+  "Action",
+  "Adventure",
+  "Comedy",
+  "Drama",
+  "Fantasy",
+  "Horror",
+  "Mystery",
+  "Romance",
+  "Thriller",
+  "Western",
+]);
 
 export const users = pgTable("users", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => createId()),
   name: text("name"),
-  // if you are using Github OAuth, you can get rid of the username attribute (that is for Twitter OAuth)
-  username: text("username"),
   gh_username: text("gh_username"),
   email: text("email").notNull().unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
@@ -59,15 +69,6 @@ export const verificationTokens = pgTable(
   },
 );
 
-export const examples = pgTable("examples", {
-  id: serial("id").primaryKey(),
-  name: text("name"),
-  description: text("description"),
-  domainCount: integer("domainCount"),
-  url: text("url"),
-  image: text("image"),
-  imageBlurhash: text("imageBlurhash"),
-});
 
 export const accounts = pgTable(
   "accounts",
@@ -99,51 +100,15 @@ export const accounts = pgTable(
   },
 );
 
-export const sites = pgTable(
-  "sites",
-  {
-    id: text("id")
-      .primaryKey()
-      .$defaultFn(() => createId()),
-    name: text("name"),
-    description: text("description"),
-    logo: text("logo").default(
-      "https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/JRajRyC-PhBHEinQkupt02jqfKacBVHLWJq7Iy.png",
-    ),
-    font: text("font").default("font-cal").notNull(),
-    image: text("image").default(
-      "https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/hxfcV5V-eInX3jbVUhjAt1suB7zB88uGd1j20b.png",
-    ),
-    imageBlurhash: text("imageBlurhash").default(
-      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAhCAYAAACbffiEAAAACXBIWXMAABYlAAAWJQFJUiTwAAABfUlEQVR4nN3XyZLDIAwE0Pz/v3q3r55JDlSBplsIEI49h76k4opexCK/juP4eXjOT149f2Tf9ySPgcjCc7kdpBTgDPKByKK2bTPFEdMO0RDrusJ0wLRBGCIuelmWJAjkgPGDSIQEMBDCfA2CEPM80+Qwl0JkNxBimiaYGOTUlXYI60YoehzHJDEm7kxjV3whOQTD3AaCuhGKHoYhyb+CBMwjIAFz647kTqyapdV4enGINuDJMSScPmijSwjCaHeLcT77C7EC0C1ugaCTi2HYfAZANgj6Z9A8xY5eiYghDMNQBJNCWhASot0jGsSCUiHWZcSGQjaWWCDaGMOWnsCcn2QhVkRuxqqNxMSdUSElCDbp1hbNOsa6Ugxh7xXauF4DyM1m5BLtCylBXgaxvPXVwEoOBjeIFVODtW74oj1yBQah3E8tyz3SkpolKS9Geo9YMD1QJR1Go4oJkgO1pgbNZq0AOUPChyjvh7vlXaQa+X1UXwKxgHokB2XPxbX+AnijwIU4ahazAAAAAElFTkSuQmCC",
-    ),
-    subdomain: text("subdomain").unique(),
-    customDomain: text("customDomain").unique(),
-    message404: text("message404").default(
-      "Blimey! You''ve found a page that doesn''t exist.",
-    ),
-    createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt", { mode: "date" })
-      .notNull()
-      .$onUpdate(() => new Date()),
-    userId: text("userId").references(() => users.id, {
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    }),
-  },
-  (table) => {
-    return {
-      userIdIdx: index().on(table.userId),
-    };
-  },
-);
 
 export const Movies = pgTable(
-  "posts",
+  "movies",
   {
     id: text("id")
       .primaryKey()
       .$defaultFn(() => createId()),
+    genre: genres("genre"),
+    rating: integer("rating"),
     title: text("title"),
     description: text("description"),
     content: text("content"),
@@ -152,9 +117,6 @@ export const Movies = pgTable(
       .$defaultFn(() => createId()),
     image: text("image").default(
       "https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/hxfcV5V-eInX3jbVUhjAt1suB7zB88uGd1j20b.png",
-    ),
-    imageBlurhash: text("imageBlurhash").default(
-      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAhCAYAAACbffiEAAAACXBIWXMAABYlAAAWJQFJUiTwAAABfUlEQVR4nN3XyZLDIAwE0Pz/v3q3r55JDlSBplsIEI49h76k4opexCK/juP4eXjOT149f2Tf9ySPgcjCc7kdpBTgDPKByKK2bTPFEdMO0RDrusJ0wLRBGCIuelmWJAjkgPGDSIQEMBDCfA2CEPM80+Qwl0JkNxBimiaYGOTUlXYI60YoehzHJDEm7kxjV3whOQTD3AaCuhGKHoYhyb+CBMwjIAFz647kTqyapdV4enGINuDJMSScPmijSwjCaHeLcT77C7EC0C1ugaCTi2HYfAZANgj6Z9A8xY5eiYghDMNQBJNCWhASot0jGsSCUiHWZcSGQjaWWCDaGMOWnsCcn2QhVkRuxqqNxMSdUSElCDbp1hbNOsa6Ugxh7xXauF4DyM1m5BLtCylBXgaxvPXVwEoOBjeIFVODtW74oj1yBQah3E8tyz3SkpolKS9Geo9YMD1QJR1Go4oJkgO1pgbNZq0AOUPChyjvh7vlXaQa+X1UXwKxgHokB2XPxbX+AnijwIU4ahazAAAAAElFTkSuQmCC",
     ),
     createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
     updatedAt: timestamp("updatedAt", { mode: "date" })
@@ -165,6 +127,14 @@ export const Movies = pgTable(
       onDelete: "cascade",
       onUpdate: "cascade",
     }),
+    actorsIds: text("actorsIds").references(() => actor.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
+    directorsIds: text("directorsIds").references(() => director.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
   },
   (table) => {
     return {
@@ -173,14 +143,80 @@ export const Movies = pgTable(
   },
 );
 
-export const postsRelations = relations(Movies, ({ one }) => ({
+export const reviews = pgTable(
+  "reviews",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    rating: integer("rating"),
+    content: text("content"),
+    createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt", { mode: "date" })
+      .notNull()
+      .$onUpdate(() => new Date()),
+    userId: text("userId").references(() => users.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
+    movieId: text("movieId").references(() => Movies.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
+  },
+  (table) => {
+    return {
+      userIdIdx: index().on(table.userId),
+      movieIdIdx: index().on(table.movieId),
+    };
+  },
+);
+
+export const actor = pgTable(
+  "actor",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    name: text("name"),
+    age: integer("age"),
+
+  },
+  (table) => {
+    return {
+      nameIdx: index().on(table.name),
+    };
+  }
+);
+
+export const director = pgTable(
+  "director",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    name: text("name"),
+    age: integer("age"),
+
+  },
+  (table) => {
+    return {
+      nameIdx: index().on(table.name),
+    };
+  }
+);
+
+
+
+
+export const movieRelations = relations(Movies, ({ one, many }) => ({
   user: one(users, { references: [users.id], fields: [Movies.userId] }),
+  reviews: many(reviews),
+  actors: many(actor),
+  directors: many(director),
 }));
 
-export const sitesRelations = relations(sites, ({ one, many }) => ({
-  posts: many(Movies),
-  user: one(users, { references: [users.id], fields: [sites.userId] }),
-}));
+
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { references: [users.id], fields: [sessions.userId] }),
@@ -193,10 +229,14 @@ export const accountsRelations = relations(accounts, ({ one }) => ({
 export const userRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   sessions: many(sessions),
-  sites: many(sites),
-  posts: many(Movies),
+  movies: many(Movies),
+  reviews: many(reviews),
 }));
 
-export type SelectSite = typeof sites.$inferSelect;
-export type SelectPost = typeof Movies.$inferSelect;
-export type SelectExample = typeof examples.$inferSelect;
+export type SelectMovie = typeof Movies.$inferSelect;
+export type SelectUser = typeof users.$inferSelect;
+export type SelectReview = typeof reviews.$inferSelect;
+export type SelectSession = typeof sessions.$inferSelect;
+export type SelectAccount = typeof accounts.$inferSelect;
+export type SelectActor = typeof actor.$inferSelect;
+export type SelectDirector = typeof director.$inferSelect;

@@ -1,8 +1,8 @@
 import { getSession } from "@/lib/auth";
 import { notFound, redirect } from "next/navigation";
 import Form from "@/components/form";
-import { updatePostMetadata } from "@/lib/actions";
-import DeletePostForm from "@/components/form/delete-post-form";
+import { updateMovieMetadata } from "@/lib/actions";
+import DeletePostForm from "@/components/form/delete-movie-form";
 import db from "@/lib/db";
 
 export default async function PostSettings({
@@ -14,8 +14,8 @@ export default async function PostSettings({
   if (!session) {
     redirect("/login");
   }
-  const data = await db.query.posts.findFirst({
-    where: (posts, { eq }) => eq(posts.id, decodeURIComponent(params.id)),
+  const data = await db.query.Movies.findFirst({
+    where: (Movies, { eq }) => eq(Movies.id, decodeURIComponent(params.id)),
   });
   if (!data || data.userId !== session.user.id) {
     notFound();
@@ -36,7 +36,7 @@ export default async function PostSettings({
             defaultValue: data?.slug!,
             placeholder: "slug",
           }}
-          handleSubmit={updatePostMetadata}
+          handleSubmit={updateMovieMetadata}
         />
 
         <Form
@@ -48,7 +48,7 @@ export default async function PostSettings({
             type: "file",
             defaultValue: data?.image!,
           }}
-          handleSubmit={updatePostMetadata}
+          handleSubmit={updateMovieMetadata}
         />
 
         <DeletePostForm postName={data?.title!} />

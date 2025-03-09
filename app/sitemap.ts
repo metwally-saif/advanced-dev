@@ -8,15 +8,15 @@ export default async function Sitemap() {
       .get("host")
       ?.replace("localhost:3000", `${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)  ?? "";
 
-  const posts = await getHomePageMovies();
+  const movies = await getHomePageMovies();
 
   return [
     {
       url: `https://${domain}`,
       lastModified: new Date(),
     },
-    ...posts.map(({ slug }) => ({
-      url: `https://${domain}/${slug}`,
+    ...movies.map(({ slug }) => ({
+      url: `https://${domain}/movies/${slug}`,
       lastModified: new Date(),
     })),
   ];

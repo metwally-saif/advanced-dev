@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getMovieData } from "@/lib/fetchers";
-import BlogCard from "@/components/blog-card";
+import MovieCard from "@/components/blog-card";
 import BlurImage from "@/components/blur-image";
 import MDX from "@/components/mdx";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";
@@ -10,9 +10,8 @@ import { Movies } from "@/lib/schema";
 export async function generateMetadata({
   params,
 }: {
-  params: { domain: string; slug: string };
+  params: {slug: string };
 }) {
-  const domain = decodeURIComponent(params.domain);
   const slug = decodeURIComponent(params.slug);
   const data = await getMovieData(slug)
   console.log("data", data)
@@ -35,13 +34,6 @@ export async function generateMetadata({
       description,
       creator: "@vercel",
     },
-    // Optional: Set canonical URL to custom domain if it exists
-    // ...(params.domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
-    //   siteData.customDomain && {
-    //     alternates: {
-    //       canonical: `https://${siteData.customDomain}/${params.slug}`,
-    //     },
-    //   }),
   };
 }
 
@@ -64,12 +56,11 @@ export async function generateStaticParams() {
   return allPaths;
 }
 
-export default async function SitePostPage({
+export default async function MovieDetailPage({
   params,
 }: {
-  params: { domain: string; slug: string };
+  params: { slug: string };
 }) {
-  const domain = decodeURIComponent(params.domain);
   const slug = decodeURIComponent(params.slug);
   const data = await getMovieData(slug);
 
@@ -98,8 +89,6 @@ export default async function SitePostPage({
           width={1200}
           height={630}
           className="h-full w-full object-cover"
-          placeholder="blur"
-          blurDataURL={data.imageBlurhash ?? placeholderBlurhash}
           src={data.image ?? "/placeholder.png"}
         />
       </div>
@@ -124,7 +113,7 @@ export default async function SitePostPage({
       {data.adjacentPosts && (
         <div className="mx-5 mb-20 grid max-w-screen-xl grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2 xl:mx-auto xl:grid-cols-3">
           {data.adjacentPosts.map((data: any, index: number) => (
-            <BlogCard key={index} data={data} />
+            <MovieCard key={index} data={data} />
           ))}
         </div>
       )}

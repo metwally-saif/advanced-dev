@@ -9,19 +9,12 @@ export default async function PostPage({ params }: { params: { id: string } }) {
     redirect("/login");
   }
 
-  const data = await db.query.posts.findFirst({
-    where: (posts, { eq }) => eq(posts.id, decodeURIComponent(params.id)),
-    with: {
-      site: {
-        columns: {
-          subdomain: true,
-        },
-      },
-    },
+  const data = await db.query.Movies.findFirst({
+    where: (Movies, { eq }) => eq(Movies.id, decodeURIComponent(params.id)),
   });
   if (!data || data.userId !== session.user.id) {
     notFound();
   }
 
-  return <Editor post={data} />;
+  return <Editor movie={data} />;
 }
