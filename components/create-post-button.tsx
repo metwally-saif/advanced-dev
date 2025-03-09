@@ -14,12 +14,18 @@ export default function CreateMovieButton() {
 
   return (
     <button
+    type="button"
       onClick={() =>
         startTransition(async () => {
-          const post = await createMovie(null, id, null);
-          va.track("Created Post");
+          const movie = await createMovie(new FormData());
+          va.track("Created Movie");
           router.refresh();
-          router.push(`/post/${post.id}`);
+          if ('id' in movie) {
+            router.push(`/movie/${movie.id}`);
+          } else {
+            // Handle error case
+            console.error("Failed to create movie:", movie);
+          }
         })
       }
       className={cn(

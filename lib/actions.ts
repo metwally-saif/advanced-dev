@@ -17,7 +17,7 @@ const nanoid = customAlphabet(
 
 
 export const createMovie = 
-  async (_: FormData) => {
+  async (_: FormData) : Promise<SelectMovie | { error: string }> => {
     const session = await getSession();
     if (!session?.user.id) {
       return {

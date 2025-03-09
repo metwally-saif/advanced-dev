@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import OverviewStats from "@/components/overview-stats";
 import Movies from "@/components/movies";
-import Link from "next/link";
 import PlaceholderCard from "@/components/placeholder-card";
 
 export default function Overview() {
