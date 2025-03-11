@@ -2,7 +2,8 @@ import { Metadata } from "next";
 import { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Login | Platforms Starter Kit",
+  title: "Login | Movie App",
+  description: "Login to your account to access your movies.",
 };
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
