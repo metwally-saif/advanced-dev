@@ -6,7 +6,6 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
-import DomainStatus from "./domain-status";
 import Uploader from "./uploader";
 import va from "@vercel/analytics";
 
@@ -22,8 +21,8 @@ export default function Form({
   helpText: string;
   inputAttrs: {
     name: string;
-    type: string;
-    defaultValue: string;
+    type: React.HTMLInputTypeAttribute;
+    defaultValue: string | number;
     placeholder?: string;
     maxLength?: number;
     pattern?: string;
@@ -66,10 +65,10 @@ export default function Form({
         <p className="text-sm text-stone-500 dark:text-stone-400">
           {description}
         </p>
-        {inputAttrs.name === "image" || inputAttrs.name === "logo" ? (
+        {inputAttrs.type === "file" && typeof inputAttrs.defaultValue === "string" ? (
           <Uploader
             defaultValue={inputAttrs.defaultValue}
-            name={inputAttrs.name}
+            name={inputAttrs.name as "image" | "logo"}
           />
         ) : inputAttrs.name === "font" ? (
           <div className="flex max-w-sm items-center overflow-hidden rounded-lg border border-stone-600">
@@ -83,29 +82,6 @@ export default function Form({
               <option value="font-lora">Lora</option>
               <option value="font-work">Work Sans</option>
             </select>
-          </div>
-        ) : inputAttrs.name === "subdomain" ? (
-          <div className="flex w-full max-w-md">
-            <input
-              {...inputAttrs}
-              required
-              className="z-10 flex-1 rounded-l-md border border-stone-300 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
-            />
-            <div className="flex items-center rounded-r-md border border-l-0 border-stone-300 bg-stone-100 px-3 text-sm dark:border-stone-600 dark:bg-stone-800 dark:text-stone-400">
-              {process.env.NEXT_PUBLIC_ROOT_DOMAIN}
-            </div>
-          </div>
-        ) : inputAttrs.name === "customDomain" ? (
-          <div className="relative flex w-full max-w-md">
-            <input
-              {...inputAttrs}
-              className="z-10 flex-1 rounded-md border border-stone-300 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
-            />
-            {inputAttrs.defaultValue && (
-              <div className="absolute right-3 z-10 flex h-full items-center">
-                <DomainStatus domain={inputAttrs.defaultValue} />
-              </div>
-            )}
           </div>
         ) : inputAttrs.name === "description" ? (
           <textarea

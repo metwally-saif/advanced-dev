@@ -93,7 +93,7 @@ export function getSession() {
 export function withMovieAuth(action: any) {
   return async (
     formData: FormData | null,
-    postId: string,
+    movieId: string,
     key: string | null,
   ) => {
     const session = await getSession();
@@ -103,16 +103,68 @@ export function withMovieAuth(action: any) {
       };
     }
 
-    const post = await db.query.Movies.findFirst({
-      where: (Movies, { eq }) => eq(Movies.id, postId),
+    const movie = await db.query.Movies.findFirst({
+      where: (Movies, { eq }) => eq(Movies.id, movieId),
     });
 
-    if (!post || post.userId !== session.user.id) {
+    if (!movie || movie.userId !== session.user.id) {
       return {
-        error: "Post not found",
+        error: "movie not found",
       };
     }
 
-    return action(formData, post, key);
+    return action(formData, movie, key);
+  };
+}
+export function withActorAuth(action: any) {
+  return async (
+    formData: FormData | null,
+    actorId: string,
+    key: string | null,
+  ) => {
+    const session = await getSession();
+    if (!session?.user.id) {
+      return {
+        error: "Not authenticated",
+      };
+    }
+
+    const actor = await db.query.actor.findFirst({
+      where: (actor, { eq }) => eq(actor.id, actorId),
+    });
+
+    if (!actor) {
+      return {
+        error: "actor not found",
+      };
+    }
+
+    return action(formData, actor, key);
+  };
+}
+export function withDirectorAuth(action: any) {
+  return async (
+    formData: FormData | null,
+    directorId: string,
+    key: string | null,
+  ) => {
+    const session = await getSession();
+    if (!session?.user.id) {
+      return {
+        error: "Not authenticated",
+      };
+    }
+
+    const director = await db.query.director.findFirst({
+      where: (director, { eq }) => eq(director.id, directorId),
+    });
+
+    if (!director) {
+      return {
+        error: "director not found",
+      };
+    }
+
+    return action(formData, director, key);
   };
 }

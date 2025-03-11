@@ -34,11 +34,13 @@ export default function Editor({ movie }: { movie: SelectMovie }) {
   }, [data, startTransitionSaving]);
 
   return (
+    <>
+    
     <div className="relative min-h-[500px] w-full max-w-screen-lg border-stone-200 p-12 px-8 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 sm:shadow-lg dark:border-stone-700">
       <div className="absolute right-5 top-5 mb-5 flex items-center space-x-3">
         {data.published && (
           <a
-            href={`/movie/${movie.id}`}
+            href={`/movies/${movie.slug}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center space-x-1 text-sm text-stone-400 hover:text-stone-500"
@@ -121,5 +123,6 @@ export default function Editor({ movie }: { movie: SelectMovie }) {
         }}
       />
     </div>
+    </>
   );
 }

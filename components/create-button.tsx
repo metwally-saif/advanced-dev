@@ -1,13 +1,19 @@
 "use client";
 
 import { useTransition } from "react";
-import { createMovie } from "@/lib/actions";
+import { createMovie, createActor, createDirector } from "@/lib/actions";
 import { cn } from "@/lib/utils";
 import { useParams, useRouter } from "next/navigation";
 import LoadingDots from "@/components/icons/loading-dots";
 import va from "@vercel/analytics";
 
-export default function CreateMovieButton() {
+
+
+export default function CreateButton({
+  type,
+} : {
+  type: "ACTOR" | "MOVIE" | "DIRECTOR";
+}) {
   const router = useRouter();
   const { id } = useParams() as { id: string };
   const [isPending, startTransition] = useTransition();
@@ -17,14 +23,15 @@ export default function CreateMovieButton() {
     type="button"
       onClick={() =>
         startTransition(async () => {
-          const movie = await createMovie(new FormData());
-          va.track("Created Movie");
+          const entity = type === "ACTOR" ? createActor : type === "DIRECTOR" ? createDirector : createMovie;
+          const res = await entity(new FormData());
+          va.track(`Create ${type}`);
           router.refresh();
-          if ('id' in movie) {
-            router.push(`/movie/${movie.id}`);
+          if ('id' in res) {
+            router.push(`/app/${type.toLowerCase()}/${res.id}`);
           } else {
             // Handle error case
-            console.error("Failed to create movie:", movie);
+            console.error( res.error);
           }
         })
       }
@@ -36,7 +43,8 @@ export default function CreateMovieButton() {
       )}
       disabled={isPending}
     >
-      {isPending ? <LoadingDots color="#808080" /> : <p>Create New Movie</p>}
+      {isPending ? <LoadingDots color="#808080" /> : <p>Create {type.charAt(0) + type.slice(1).toLowerCase()}</p>}
     </button>
-  );
+  );       
+
 }

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getMovieData } from "@/lib/fetchers";
-import MovieCard from "@/components/blog-card";
+import MovieCard from "@/components/movie-card";
 import BlurImage from "@/components/blur-image";
 import MDX from "@/components/mdx";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";

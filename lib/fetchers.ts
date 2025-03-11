@@ -1,8 +1,9 @@
 import { unstable_cache } from "next/cache";
 import db from "./db";
 import { and, desc, eq } from "drizzle-orm";
-import { Movies, users } from "./schema";
+import { Movies, users, actor, director, movieActors, movieDirectors } from "./schema";
 import { serialize } from "next-mdx-remote/serialize";
+import { getSession } from "./auth";
 
 
 export async function getHomePageMovies() {
@@ -95,6 +96,149 @@ export async function getMovieData(slug: string) {
     },
   )();
 }
+
+export async function getActorDataByName(name: string) {
+  return await unstable_cache(
+    async () => {
+      const data = await db
+        .select({
+          actor: actor,
+        })
+        .from(actor)
+        .where(
+          and(
+            eq(actor.name, name),
+          ),
+        )
+        .leftJoin(movieActors, eq(actor.id, movieActors.actorId))
+        .then((res) =>
+          res.length > 0
+            ? {
+                ...res[0].actor
+                  ? {
+                      ...res[0].actor,
+                    }
+                  : null,
+              }
+            : null,
+        );
+
+      if (!data) return null;
+
+      return {
+        ...data,
+      };
+    },
+    [`actor-${name}`],
+    {
+      revalidate: 900, // 15 minutes
+      tags: [`actor-${name}`],
+    },
+  )();
+}
+
+export async function getDirectorDataByName(name: string) {
+  return await unstable_cache(
+    async () => {
+      const data = await db
+        .select({
+          director: director,
+        })
+        .from(director)
+  
+        .where(
+          and(
+            eq(director.name, name),
+          ),
+        )
+        .leftJoin(movieDirectors, eq(movieDirectors.directorId, director.id))
+        .then((res) =>
+          res.length > 0
+            ? {
+                ...res[0].director
+                  ? {
+                      ...res[0].director,
+                    }
+                  : null,
+              }
+            : null,
+        );
+
+      if (!data) return null;
+
+      return {
+        ...data,
+      };
+    },
+    [`director-${name}`],
+    {
+      revalidate: 900, // 15 minutes
+      tags: [`director-${name}`],
+    },
+  )();
+}
+// Get actors for a movie
+export async function getMovieActors(movieId: string) {
+  const session = await getSession();
+  if (!session?.user.id) {
+    return { error: "Not authenticated" };
+  }
+  
+  try {
+    const movie = await db.query.Movies.findFirst({
+      where: eq(Movies.id, movieId),
+      with: {
+        movieActors: {
+          with: {
+            actor: true
+          }
+        }
+      }
+    });
+    
+    if (!movie) {
+      return { error: "Movie not found" };
+    }
+    
+    return movie.movieActors.map(ma => ma.actor);
+  } catch (error: any) {
+    return { error: error.message };
+  }
+}
+
+// Get directors for a movie
+export async function getMovieDirectors(movieId: string) {
+  const session = await getSession();
+  if (!session?.user.id) {
+    return { error: "Not authenticated" };
+  }
+  
+  try {
+    const movie = await db.query.Movies.findFirst({
+      where: eq(Movies.id, movieId),
+      with: {
+        movieDirectors: {
+          with: {
+            director: true
+          }
+        }
+      }
+    });
+
+    if (!movie) {
+      return { error: "Movie not found" };
+    }
+
+    return movie.movieDirectors.map(md => md.director);
+
+  }
+  catch (error: any) {
+    return { error: error.message };
+  }
+}
+
+
+
 
 async function getMdxSource(postContents: string) {
   // transforms links like <link> to [link](link) as MDX doesn't support <link> syntax

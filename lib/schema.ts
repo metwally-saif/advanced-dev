@@ -115,9 +115,7 @@ export const Movies = pgTable(
     slug: text("slug")
       .notNull()
       .$defaultFn(() => createId()),
-    image: text("image").default(
-      "https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/hxfcV5V-eInX3jbVUhjAt1suB7zB88uGd1j20b.png",
-    ),
+    image: text("image"),
     createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
     updatedAt: timestamp("updatedAt", { mode: "date" })
       .notNull()
@@ -126,15 +124,7 @@ export const Movies = pgTable(
     userId: text("userId").references(() => users.id, {
       onDelete: "cascade",
       onUpdate: "cascade",
-    }),
-    actorsIds: text("actorsIds").references(() => actor.id, {
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    }),
-    directorsIds: text("directorsIds").references(() => director.id, {
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    }),
+    })
   },
   (table) => {
     return {
@@ -179,12 +169,33 @@ export const actor = pgTable(
       .primaryKey()
       .$defaultFn(() => createId()),
     name: text("name"),
+    image: text("image"),
     age: integer("age"),
 
   },
   (table) => {
     return {
       nameIdx: index().on(table.name),
+    };
+  }
+);
+
+export const movieActors = pgTable(
+  "movie_actors",
+  {
+    id: text("id").$defaultFn(() => createId()).primaryKey(),
+    movieId: text("movie_id").notNull().references(() => Movies.id, { 
+      onDelete: "cascade", 
+      onUpdate: "cascade" 
+    }),
+    actorId: text("actor_id").notNull().references(() => actor.id, { 
+      onDelete: "cascade", 
+      onUpdate: "cascade" 
+    }),
+  },
+  (table) => {
+    return {
+      movieActorIdx: index().on(table.movieId, table.actorId),
     };
   }
 );
@@ -196,6 +207,7 @@ export const director = pgTable(
       .primaryKey()
       .$defaultFn(() => createId()),
     name: text("name"),
+    image: text("image"),
     age: integer("age"),
 
   },
@@ -206,17 +218,53 @@ export const director = pgTable(
   }
 );
 
+export const movieDirectors = pgTable(
+  "movie_directors",
+  {
+    id: text("id").$defaultFn(() => createId()).primaryKey(),
+    movieId: text("movie_id").notNull().references(() => Movies.id, { 
+      onDelete: "cascade", 
+      onUpdate: "cascade" 
+    }),
+    directorId: text("director_id").notNull().references(() => director.id, { 
+      onDelete: "cascade", 
+      onUpdate: "cascade" 
+    }),
+  },
+  (table) => {
+    return {
+      movieDirectorIdx: index().on(table.movieId, table.directorId),
+    };
+  }
+);
+
 
 
 
 export const movieRelations = relations(Movies, ({ one, many }) => ({
   user: one(users, { references: [users.id], fields: [Movies.userId] }),
   reviews: many(reviews),
-  actors: many(actor),
-  directors: many(director),
+  movieActors: many(movieActors),
+  movieDirectors: many(movieDirectors),
 }));
 
+export const actorRelations = relations(actor, ({ many }) => ({
+  movieActors: many(movieActors),
+}));
 
+export const directorRelations = relations(director, ({ many }) => ({
+  movieDirectors: many(movieDirectors),
+}));
+
+export const movieActorsRelations = relations(movieActors, ({ one }) => ({
+  movie: one(Movies, { references: [Movies.id], fields: [movieActors.movieId] }),
+  actor: one(actor, { references: [actor.id], fields: [movieActors.actorId] }),
+}));
+
+export const movieDirectorsRelations = relations(movieDirectors, ({ one }) => ({
+  movie: one(Movies, { references: [Movies.id], fields: [movieDirectors.movieId] }),
+  director: one(director, { references: [director.id], fields: [movieDirectors.directorId] }),
+}));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { references: [users.id], fields: [sessions.userId] }),

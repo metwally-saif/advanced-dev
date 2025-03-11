@@ -2,10 +2,10 @@ import { getSession } from "@/lib/auth";
 import { notFound, redirect } from "next/navigation";
 import Form from "@/components/form";
 import { updateMovieMetadata } from "@/lib/actions";
-import DeletePostForm from "@/components/form/delete-movie-form";
+import DeleteForm from "@/components/form/delete-form";
 import db from "@/lib/db";
 
-export default async function PostSettings({
+export default async function MovieSettingsPage({
   params,
 }: {
   params: { id: string };
@@ -24,12 +24,12 @@ export default async function PostSettings({
     <div className="flex max-w-screen-xl flex-col space-y-12 p-6">
       <div className="flex flex-col space-y-6">
         <h1 className="font-cal text-3xl font-bold dark:text-white">
-          Post Settings
+          Movie Settings
         </h1>
         <Form
           title="Post Slug"
           description="The slug is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens."
-          helpText="Please use a slug that is unique to this post."
+          helpText="Please use a slug that is unique to this Movie."
           inputAttrs={{
             name: "slug",
             type: "text",
@@ -41,17 +41,17 @@ export default async function PostSettings({
 
         <Form
           title="Thumbnail image"
-          description="The thumbnail image for your post. Accepted formats: .png, .jpg, .jpeg"
-          helpText="Max file size 50MB. Recommended size 1200x630."
+          description="The thumbnail image for your Movie"
+          helpText="Please use a high-quality image url."
           inputAttrs={{
             name: "image",
-            type: "file",
+            type: "text",
             defaultValue: data?.image!,
           }}
           handleSubmit={updateMovieMetadata}
         />
 
-        <DeletePostForm postName={data?.title!} />
+        <DeleteForm Title={data?.title!} type="MOVIE" />
       </div>
     </div>
   );

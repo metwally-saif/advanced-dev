@@ -5,42 +5,44 @@ import { cn } from "@/lib/utils";
 import { useParams, useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
-import { deleteMovie } from "@/lib/actions";
+import { deleteMovie, deleteActor, deleteDirector } from "@/lib/actions";
 import va from "@vercel/analytics";
 
-export default function DeletePostForm({ postName }: { postName: string }) {
+export default function DeleteForm({ Title, type }: { Title: string, type: "ACTOR" | "MOVIE" | "DIRECTOR" }) {
   const { id } = useParams() as { id: string };
   const router = useRouter();
+  const entity = type === "ACTOR" ? deleteActor : type === "DIRECTOR" ? deleteDirector : deleteMovie;
+
   return (
     <form
       action={async (data: FormData) =>
-        window.confirm("Are you sure you want to delete your post?") &&
-        deleteMovie(data, id, "delete").then((res) => {
+        window.confirm(`Are you sure you want to delete ${type.toLocaleLowerCase()}?`) &&
+        entity(data, id, "delete").then((res) => {
           if (res.error) {
             toast.error(res.error);
           } else {
-            va.track("Deleted Post");
+            va.track(`Deleted ${type.toLocaleLowerCase()}: ${id}`);
             router.refresh();
-            router.push(`/app/movies`);
-            toast.success(`Successfully deleted post!`);
+            router.push(`/app/${type.toLocaleLowerCase()}s`);
+            toast.success(`Successfully deleted ${type.toLocaleLowerCase()}!`);
           }
         })
       }
       className="rounded-lg border border-red-600 bg-white dark:bg-black"
     >
       <div className="relative flex flex-col space-y-4 p-5 sm:p-10">
-        <h2 className="font-cal text-xl dark:text-white">Delete Post</h2>
+        <h2 className="font-cal text-xl dark:text-white">Delete {type.toLocaleLowerCase()}</h2>
         <p className="text-sm text-stone-500 dark:text-stone-400">
-          Deletes your post permanently. Type in the name of your post{" "}
-          <b>{postName}</b> to confirm.
+          Deletes {type.toLocaleLowerCase()} permanently. Type in the name of the {type.toLocaleLowerCase()}{" "}
+          <b>{Title}</b> to confirm.
         </p>
 
         <input
           name="confirm"
           type="text"
           required
-          pattern={postName}
-          placeholder={postName}
+          pattern={Title}
+          placeholder={Title}
           className="w-full max-w-md rounded-md border border-stone-300 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
         />
       </div>

@@ -4,6 +4,8 @@ import Link from "next/link";
 import {
   ArrowLeft,
   Edit3,
+  RockingChair,
+  PersonStanding,
   Film,
   LayoutDashboard,
   Menu,
@@ -59,6 +61,18 @@ export default function Nav({ children }: { children: ReactNode }) {
         href: "/movies",
         isActive: segments[0] === "movies",
         icon: <Film width={18} />,
+      },
+      {
+        name: "Directors",
+        href: "/directors",
+        isActive: segments[0] === "directors",
+        icon: <RockingChair width={18} />,
+      },
+      {
+        name: "Actors",
+        href: "/actors",
+        isActive: segments[0] === "actors",
+        icon: <PersonStanding width={18} />,
       },
       {
         name: "Settings",

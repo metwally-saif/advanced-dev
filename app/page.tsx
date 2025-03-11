@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";
-import MovieCard from "@/components/blog-card";
+import MovieCard from "@/components/movie-card";
 import { getHomePageMovies } from "@/lib/fetchers";
 import Image from "next/image";
 
@@ -19,7 +19,7 @@ export default async function HomePage() {
       <div className="mb-20 w-full">
         {movieData.length > 0 ? (
           <div className="mx-auto w-full max-w-screen-xl md:mb-28 lg:w-5/6">
-            <Link href={`/app/${movieData[0].slug}`}>
+            <Link href={`/movies/${movieData[0].slug}`}>
               <div className="group relative mx-auto h-80 w-full overflow-hidden sm:h-150 lg:rounded-xl">
                 <Image 
                   alt={movieData[0].title ?? "Movie Image"}
