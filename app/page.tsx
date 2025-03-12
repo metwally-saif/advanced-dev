@@ -16,7 +16,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <div className="mb-20 w-full">
+      <div className="my-20 w-full">
         {movieData.length > 0 ? (
           <div className="mx-auto w-full max-w-screen-xl md:mb-28 lg:w-5/6">
             <Link href={`/movies/${movieData[0].slug}`}>

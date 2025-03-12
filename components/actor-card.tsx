@@ -12,7 +12,7 @@ export default function ActorCard({
   return (
     <div className="relative rounded-lg border border-stone-200 pb-10 shadow-md transition-all hover:shadow-xl dark:border-stone-700 dark:hover:border-white">
       <Link
-        href={`/app/director/${data.id}`}
+        href={`/app/actor/${data.id}`}
         className="flex flex-col overflow-hidden rounded-lg"
       >
                         <div className="relative h-44 overflow-hidden">

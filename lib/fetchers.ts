@@ -1,7 +1,7 @@
 import { unstable_cache } from "next/cache";
 import db from "./db";
-import { and, desc, eq } from "drizzle-orm";
-import { Movies, users, actor, director, movieActors, movieDirectors } from "./schema";
+import { and, desc, eq, ilike } from "drizzle-orm";
+import { Movies, users, actor, director, movieActors, movieDirectors, SelectActor } from "./schema";
 import { serialize } from "next-mdx-remote/serialize";
 import { getSession } from "./auth";
 
@@ -177,8 +177,10 @@ export async function getDirectorDataByName(name: string) {
     },
   )();
 }
+
+
 // Get actors for a movie
-export async function getMovieActors(movieId: string) {
+export async function getMovieActors(movieId: string) : Promise<SelectActor[] | { error: string }> {
   const session = await getSession();
   if (!session?.user.id) {
     return { error: "Not authenticated" };
@@ -246,9 +248,7 @@ async function getMdxSource(postContents: string) {
   const content =
     postContents?.replaceAll(/<(https?:\/\/\S+)>/g, "[$1]($1)") ?? "";
   // Serialize the content string into MDX
-  const mdxSource = await serialize(content, {
-
-  });
+  const mdxSource = await serialize(content);
 
   return mdxSource;
 }

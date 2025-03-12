@@ -17,7 +17,7 @@ export default function MovieCard({
       >
         <div className="relative h-44 overflow-hidden">
                   <BlurImage
-                    src={data.image!}
+                    src={data.image! ?? ""}
                     alt={data.title ?? "movie"}
                     width={500}
                     height={400}

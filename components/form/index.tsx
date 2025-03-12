@@ -1,23 +1,29 @@
+
 "use client";
 
 import LoadingDots from "@/components/icons/loading-dots";
 import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
+import { genres} from '@/lib/schema';
 import { useParams, useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
 import Uploader from "./uploader";
 import va from "@vercel/analytics";
+import { useState } from "react";
+import SearchDropdown from "./search-dropdown";
 
 export default function Form({
   title,
   description,
   helpText,
+  searchFunction,
   inputAttrs,
   handleSubmit,
 }: {
   title: string;
   description: string;
+  searchFunction?: any;
   helpText: string;
   inputAttrs: {
     name: string;
@@ -29,19 +35,17 @@ export default function Form({
   };
   handleSubmit: any;
 }) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const { id } = useParams() as { id?: string };
   const router = useRouter();
   const { update } = useSession();
+
+
   return (
     <form
       action={async (data: FormData) => {
-        if (
-          inputAttrs.name === "customDomain" &&
-          inputAttrs.defaultValue &&
-          data.get("customDomain") !== inputAttrs.defaultValue &&
-          !confirm("Are you sure you want to change your custom domain?")
-        ) {
-          return;
+        if (inputAttrs.name === "actorId" || inputAttrs.name === "directorId") {
+          data.set(inputAttrs.name, selectedId || "");
         }
         handleSubmit(data, id, inputAttrs.name).then(async (res: any) => {
           if (res.error) {
@@ -90,7 +94,40 @@ export default function Form({
             required
             className="w-full max-w-xl rounded-md border border-stone-300 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
           />
-        ) : (
+        ) : inputAttrs.name === "actorId" ? (
+          <SearchDropdown
+            name="actorId"
+            placeholder="Search actors..."
+            defaultValue={inputAttrs.defaultValue.toString()}
+            searchFunction={searchFunction}
+            onSelect={(id) => setSelectedId(id)}
+          />
+        ) : inputAttrs.name === "directorId" ? (
+          <SearchDropdown
+            name="directorId"
+            placeholder="Search directors..."
+            defaultValue={inputAttrs.defaultValue.toString()}
+            searchFunction={searchFunction}
+            onSelect={(id) => setSelectedId(id)}
+          />
+        ) : inputAttrs.name === "genre" ? (
+          <div className="flex max-w-sm items-center overflow-hidden rounded-lg border border-stone-600">
+            <select
+            {...inputAttrs}
+              name="genre"
+              defaultValue={inputAttrs.defaultValue}
+              className="w-full rounded-none border-none bg-white px-4 py-2 text-sm font-medium text-stone-700 focus:outline-none focus:ring-black dark:bg-black dark:text-stone-200 dark:focus:ring-white"
+            >
+      <option value="">Select a genre</option>
+      {genres.enumValues.map((genreValue) => (
+        <option key={genreValue} value={genreValue}>
+          {genreValue}
+        </option>
+      ))}
+            </select>
+          </div>
+        ) :
+         (
           <input
             {...inputAttrs}
             required

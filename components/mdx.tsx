@@ -4,87 +4,64 @@ import { MDXRemote, MDXRemoteProps } from "next-mdx-remote";
 import { replaceLinks } from "@/lib/remark-plugins";
 import { Tweet } from "react-tweet";
 import BlurImage from "@/components/blur-image";
-import styles from "./mdx.module.css";
-import type { SelectMovie } from "@/lib/schema";
+import { useState, useRef, useEffect } from "react";
 
 export default function MDX({ source }: { source: MDXRemoteProps }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [isTruncated, setIsTruncated] = useState(false);
+  const [maxHeight, setMaxHeight] = useState<string>("400px"); // Slightly shorter for better truncation
+  
   const components = {
     a: replaceLinks,
     BlurImage,
-    Examples,
     Tweet,
   };
+  
+  useEffect(() => {
+    const checkHeight = () => {
+      if (contentRef.current) {
+        const fullHeight = contentRef.current.scrollHeight;
+        const visibleHeight = parseInt(maxHeight);
+        setIsTruncated(fullHeight > visibleHeight);
+      }
+    };
+    
+    checkHeight();
+    window.addEventListener('resize', checkHeight);
+    return () => window.removeEventListener('resize', checkHeight);
+  }, [maxHeight, source]);
 
   return (
-    <article
-      className={`prose-md prose prose-stone m-auto w-11/12 sm:prose-lg dark:prose-invert sm:w-3/4 ${styles.root}`}
-      suppressHydrationWarning={true}
-    >
-      {/* @ts-ignore */}
-      <MDXRemote {...source} components={components} />
-    </article>
-  );
-}
-
-interface ExampleCardProps
-  extends Pick<SelectMovie, "description" | "image" > {
-  name: string | null;
-  url: string | null;
-}
-
-function Examples({ data }: { data: string }) {
-  if (!data) return null;
-  const parsedData = JSON.parse(data) as Array<ExampleCardProps>;
-  return (
-    <div className="not-prose my-10 grid grid-cols-1 gap-x-4 gap-y-4 lg:-mx-36 lg:mb-20 lg:grid-cols-3 lg:gap-y-8">
-      {parsedData.map((d) => (
-        <ExamplesCard data={d} key={d.name} />
-      ))}
+    <div className={`transition-all duration-500 ease-in-out container mx-auto px-4`}>
+      <article
+        className={`prose prose-stone max-w-none prose-base dark:prose-invert`}
+        suppressHydrationWarning={true}
+      >
+        <div 
+          ref={contentRef}
+          className={`overflow-hidden transition-all duration-500 ease-in-out ${isExpanded ? '' : 'relative'}`} 
+          style={{ maxHeight: isExpanded ? '100%' : maxHeight }}
+        >
+          {/* @ts-ignore */}
+          <MDXRemote {...source} components={components} />
+          
+          {!isExpanded && isTruncated && (
+            <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white dark:from-black to-transparent"></div>
+          )}
+        </div>
+        
+        {isTruncated && (
+          <div className="flex justify-center mt-4 mb-8">
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700"
+            >
+              {isExpanded ? 'Show Less' : 'Read More'}
+            </button>
+          </div>
+        )}
+      </article>
     </div>
-  );
-}
-
-function ExamplesCard({ data }: { data: ExampleCardProps }) {
-  return (
-    <a href={`https://${data.url}`} target="_blank" rel="noreferrer">
-      <div className="ease hidden rounded-2xl border-2 border-gray-100 bg-white shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-xl lg:block">
-        <div className="overflow-hidden rounded-t-2xl">
-          <BlurImage
-            alt={data.name ?? "Card Thumbnail"}
-            width={500}
-            height={400}
-            className="h-64 w-full object-cover"
-            src={data.image ?? "/placeholder.png"}
-          />
-        </div>
-        <div className="h-36 px-5 py-6">
-          <h3 className="truncate font-cal text-2xl font-bold tracking-wide">
-            {data.name}
-          </h3>
-          <p className="mt-3 text-base italic leading-snug text-gray-800">
-            {data.description}
-          </p>
-        </div>
-      </div>
-      <div className="ease flex h-36 items-center overflow-hidden rounded-xl border-2 border-gray-100 bg-white transition-all duration-200 focus:border-black active:border-black md:h-48 lg:hidden">
-        <div className="relative h-full w-2/5">
-          <BlurImage
-            alt={data.name ?? "Card thumbnail"}
-            width={500}
-            height={400}
-            className="h-full object-cover"
-            src={`/examples/${data.image}`}
-          />
-        </div>
-        <div className="w-3/5 px-5 py-6">
-          <h3 className="my-0 truncate font-cal text-xl font-bold tracking-wide dark:text-white">
-            {data.name}
-          </h3>
-          <p className="mt-3 text-sm font-normal italic leading-snug text-gray-800">
-            {data.description}
-          </p>
-        </div>
-      </div>
-    </a>
   );
 }

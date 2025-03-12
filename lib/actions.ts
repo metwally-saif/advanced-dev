@@ -359,22 +359,17 @@ export const addActorToMovie = withMovieAuth(
 );
 
 // Remove actor from movie
-export const removeActorFromMovie = withMovieAuth(
+export const removeActorFromMovie = 
   async (
-    formData: FormData,
-    movie: SelectMovie,
+    movieId: string,
+    actorId: string,
   ) => {
-    const actorId = formData.get("actorId") as string;
-    if (!actorId) {
-      return { error: "Actor ID is required" };
-    }
-    
     try {
       const [response] = await db
         .delete(movieActors)
         .where(
           and(
-            eq(movieActors.movieId, movie.id),
+            eq(movieActors.movieId, movieId),
             eq(movieActors.actorId, actorId)
           )
         )
@@ -384,13 +379,13 @@ export const removeActorFromMovie = withMovieAuth(
         return { error: "Association not found" };
       }
       
-      revalidateTag(`movie-${movie.id}-actors`);
+      revalidateTag(`movie-${movieId}-actors`);
       return response;
     } catch (error: any) {
       return { error: error.message };
     }
   }
-);
+
 
 // Add director to a movie
 export const addDirectorToMovie = withMovieAuth(

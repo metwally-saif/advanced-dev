@@ -3,7 +3,7 @@ import { getMovieData } from "@/lib/fetchers";
 import MovieCard from "@/components/movie-card";
 import BlurImage from "@/components/blur-image";
 import MDX from "@/components/mdx";
-import { placeholderBlurhash, toDateString } from "@/lib/utils";
+import { toDateString } from "@/lib/utils";
 import db from "@/lib/db";
 import { Movies } from "@/lib/schema";
 
@@ -14,7 +14,6 @@ export async function generateMetadata({
 }) {
   const slug = decodeURIComponent(params.slug);
   const data = await getMovieData(slug)
-  console.log("data", data)
 
   if (!data) {
     return null;
@@ -78,7 +77,7 @@ export default async function MovieDetailPage({
           <h1 className="mb-10 font-title text-3xl font-bold text-stone-800 md:text-6xl dark:text-white">
             {data.title}
           </h1>
-          <p className="text-md m-auto w-10/12 text-stone-600 md:text-lg dark:text-stone-400">
+          <p className="mb-10 text-md m-auto w-10/12 text-stone-600 md:text-lg dark:text-stone-400">
             {data.description}
           </p>
         </div>
