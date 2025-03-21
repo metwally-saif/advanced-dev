@@ -3,7 +3,7 @@
 import { getSession } from "@/lib/auth";
 import { and, eq } from "drizzle-orm";
 import { customAlphabet } from "nanoid";
-import { revalidateTag } from "next/cache";
+import { revalidateTag, revalidatePath } from "next/cache";
 import { withMovieAuth, withActorAuth, withDirectorAuth } from "./auth";
 import db from "./db";
 import { SelectMovie, Movies, users, actor, SelectActor, director, SelectDirector, reviews, SelectReview, movieDirectors, movieActors } from "./schema";
@@ -13,9 +13,32 @@ const nanoid = customAlphabet(
   7,
 ); // 7-character random string
 
+// Helper function to handle comprehensive revalidation
+const revalidateContent = (type: 'movie' | 'actor' | 'director', id?: string) => {
+  // Always revalidate homepage
+  revalidatePath('/', 'page');
 
+  // Revalidate the list pages
+  revalidateTag('movies-list');
+  revalidateTag('actors-list');
+  revalidateTag('directors-list');
 
-export const createMovie = 
+  // Revalidate specific content type
+  revalidateTag(`${type}s-all`);
+
+  // If we have an ID, revalidate specific content
+  if (id) {
+    revalidateTag(`${type}-${id}`);
+
+    // For movies, also revalidate their relationships
+    if (type === 'movie') {
+      revalidateTag(`movie-${id}-actors`);
+      revalidateTag(`movie-${id}-directors`);
+    }
+  }
+}
+
+export const createMovie =
   async (_: FormData) : Promise<SelectMovie | { error: string }> => {
     const session = await getSession();
     if (!session?.user.id) {
@@ -31,9 +54,8 @@ export const createMovie =
       })
       .returning();
 
-    revalidateTag(
-      `${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
-    );
+    // Comprehensive revalidation
+    revalidateContent('movie', response.id);
 
     return response;
   };
@@ -53,9 +75,8 @@ export const createActor = async  (_: FormData) : Promise<SelectActor | { error:
     })
     .returning();
 
-  revalidateTag(
-    `${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-actors`,
-  );
+  // Comprehensive revalidation
+  revalidateContent('actor', response.id);
 
   return response;
 };
@@ -75,9 +96,8 @@ export const createDirector = async (_: FormData) : Promise<SelectDirector | { e
     })
     .returning();
 
-  revalidateTag(
-    `${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-directors`,
-  );
+  // Comprehensive revalidation
+  revalidateContent('director', response.id);
 
   return response;
 };
@@ -112,6 +132,8 @@ export const updateMovie = async (data: SelectMovie) => {
       .where(eq(Movies.id, data.id))
       .returning();
 
+    // Comprehensive revalidation
+    revalidateContent('movie', data.id);
 
     return response;
   } catch (error: any) {
@@ -138,8 +160,9 @@ export const updateMovieMetadata = withMovieAuth(
           .where(eq(Movies.id, movie.id))
           .returning()
           .then((res) => res[0]);
-      
 
+      // Comprehensive revalidation
+      revalidateContent('movie', movie.id);
 
       return response;
     } catch (error: any) {
@@ -173,18 +196,20 @@ export const updateActorMetadata = withActorAuth(
           .where(eq(actor.id, selectedActor.id))
           .returning()
           .then((res) => res[0]);
-  
+
+      // Comprehensive revalidation
+      revalidateContent('actor', selectedActor.id);
+
+      // Also revalidate any movies this actor might be in
+      revalidateTag(`actor-${selectedActor.id}-movies`);
+
       return response;
     } catch (error: any) {
-
         return {
           error: error.message,
         };
-      
     }
   }
-
-
 );
 
 export const updateDirectorMetadata = withDirectorAuth(
@@ -204,14 +229,18 @@ export const updateDirectorMetadata = withDirectorAuth(
           .where(eq(director.id, selectedDirector.id))
           .returning()
           .then((res) => res[0]);
-      
+
+      // Comprehensive revalidation
+      revalidateContent('director', selectedDirector.id);
+
+      // Also revalidate any movies this director might be in
+      revalidateTag(`director-${selectedDirector.id}-movies`);
+
       return response;
     } catch (error: any) {
-
         return {
           error: error.message,
         };
-      
     }
   }
 );
@@ -225,6 +254,9 @@ export const deleteMovie = withMovieAuth(
         .returning({
           slug: Movies.slug,
         });
+
+      // Comprehensive revalidation
+      revalidateContent('movie', post.id);
 
       return response;
     } catch (error: any) {
@@ -245,6 +277,9 @@ export const deleteActor = withActorAuth(
           id: actor.id,
         });
 
+      // Comprehensive revalidation
+      revalidateContent('actor', selectedActor.id);
+
       return response;
     } catch (error: any) {
       return {
@@ -252,7 +287,7 @@ export const deleteActor = withActorAuth(
       };
     }
   }
-  );
+);
 
 export const deleteDirector = withDirectorAuth(
   async (_: FormData, selectedDirector: SelectDirector) => {
@@ -264,6 +299,9 @@ export const deleteDirector = withDirectorAuth(
           id: director.id,
         });
 
+      // Comprehensive revalidation
+      revalidateContent('director', selectedDirector.id);
+
       return response;
     } catch (error: any) {
       return {
@@ -271,43 +309,7 @@ export const deleteDirector = withDirectorAuth(
       };
     }
   }
-  );
-
-export const editUser = async (
-  formData: FormData,
-  _id: unknown,
-  key: string,
-) => {
-  const session = await getSession();
-  if (!session?.user.id) {
-    return {
-      error: "Not authenticated",
-    };
-  }
-  const value = formData.get(key) as string;
-
-  try {
-    const [response] = await db
-      .update(users)
-      .set({
-        [key]: value,
-      })
-      .where(eq(users.id, session.user.id))
-      .returning();
-
-    return response;
-  } catch (error: any) {
-    if (error.code === "P2002") {
-      return {
-        error: `This ${key} is already in use`,
-      };
-    } else {
-      return {
-        error: error.message,
-      };
-    }
-  }
-};
+);
 
 export const addActorToMovie = withMovieAuth(
   async (
@@ -324,11 +326,11 @@ export const addActorToMovie = withMovieAuth(
       const actorExists = await db.query.actor.findFirst({
         where: eq(actor.id, actorId)
       });
-      
+
       if (!actorExists) {
         return { error: "Actor not found" };
       }
-      
+
       // Check if association already exists
       const existingAssociation = await db.query.movieActors.findFirst({
         where: and(
@@ -336,11 +338,11 @@ export const addActorToMovie = withMovieAuth(
           eq(movieActors.actorId, actorId)
         )
       });
-      
+
       if (existingAssociation) {
         return { error: "Actor is already associated with this movie" };
       }
-      
+
       // Create the association
       const [response] = await db
         .insert(movieActors)
@@ -349,8 +351,11 @@ export const addActorToMovie = withMovieAuth(
           actorId: actorId
         })
         .returning();
-        
-      revalidateTag(`movie-${movie.id}-actors`);
+
+      // Comprehensive revalidation
+      revalidateContent('movie', movie.id);
+      revalidateTag(`actor-${actorId}-movies`);
+
       return response;
     } catch (error: any) {
       return { error: error.message };
@@ -359,7 +364,7 @@ export const addActorToMovie = withMovieAuth(
 );
 
 // Remove actor from movie
-export const removeActorFromMovie = 
+export const removeActorFromMovie =
   async (
     movieId: string,
     actorId: string,
@@ -374,18 +379,20 @@ export const removeActorFromMovie =
           )
         )
         .returning();
-        
+
       if (!response) {
         return { error: "Association not found" };
       }
-      
-      revalidateTag(`movie-${movieId}-actors`);
+
+      // Comprehensive revalidation
+      revalidateContent('movie', movieId);
+      revalidateTag(`actor-${actorId}-movies`);
+
       return response;
     } catch (error: any) {
       return { error: error.message };
     }
   }
-
 
 // Add director to a movie
 export const addDirectorToMovie = withMovieAuth(
@@ -403,11 +410,11 @@ export const addDirectorToMovie = withMovieAuth(
       const directorExists = await db.query.director.findFirst({
         where: eq(director.id, directorId)
       });
-      
+
       if (!directorExists) {
         return { error: "Director not found" };
       }
-      
+
       // Check if association already exists
       const existingAssociation = await db.query.movieDirectors.findFirst({
         where: and(
@@ -415,11 +422,11 @@ export const addDirectorToMovie = withMovieAuth(
           eq(movieDirectors.directorId, directorId)
         )
       });
-      
+
       if (existingAssociation) {
         return { error: "Director is already associated with this movie" };
       }
-      
+
       // Create the association
       const [response] = await db
         .insert(movieDirectors)
@@ -428,8 +435,11 @@ export const addDirectorToMovie = withMovieAuth(
           directorId: directorId
         })
         .returning();
-        
-      revalidateTag(`movie-${movie.id}-directors`);
+
+      // Comprehensive revalidation
+      revalidateContent('movie', movie.id);
+      revalidateTag(`director-${directorId}-movies`);
+
       return response;
     } catch (error: any) {
       return { error: error.message };
@@ -447,7 +457,7 @@ export const removeDirectorFromMovie = withMovieAuth(
     if (!directorId) {
       return { error: "Director ID is required" };
     }
-    
+
     try {
       const [response] = await db
         .delete(movieDirectors)
@@ -458,12 +468,15 @@ export const removeDirectorFromMovie = withMovieAuth(
           )
         )
         .returning();
-        
+
       if (!response) {
         return { error: "Association not found" };
       }
-      
-      revalidateTag(`movie-${movie.id}-directors`);
+
+      // Comprehensive revalidation
+      revalidateContent('movie', movie.id);
+      revalidateTag(`director-${directorId}-movies`);
+
       return response;
     } catch (error: any) {
       return { error: error.message };

@@ -2,8 +2,8 @@
 
 import { unstable_cache } from "next/cache";
 import db from "./db";
-import { ilike } from "drizzle-orm";
-import { actor, director } from "./schema";
+import { desc, ilike } from "drizzle-orm";
+import { actor, director, Movies } from "./schema";
 
 
 export async function searchActorsByName(name: string) {
@@ -14,11 +14,12 @@ export async function searchActorsByName(name: string) {
           .select({
             id: actor.id,
             name: actor.name,
+            image: director.image,
           })
           .from(actor)
           .where(ilike(actor.name, `%${name}%`));
       };
-      
+
       // Try to use the cache if available
       try {
         return await unstable_cache(
@@ -39,7 +40,7 @@ export async function searchActorsByName(name: string) {
       return [];
     }
   }
-  
+
   export async function searchDirectorsByName(name: string) {
     return await unstable_cache(
       async () => {
@@ -47,10 +48,10 @@ export async function searchActorsByName(name: string) {
           .select({
             id: director.id,
             name: director.name,
+            image: director.image,
           })
           .from(director)
           .where(
-  
             ilike(director.name, `%${name}%`),
           );
       },
@@ -58,6 +59,30 @@ export async function searchActorsByName(name: string) {
       {
         revalidate: 900, // 15 minutes
         tags: [`search-directors-${name}`],
+      },
+    )();
+  }
+
+  export async function searchMoviesByTitle(title: string) {
+    return await unstable_cache(
+      async () => {
+        return await db
+          .select({
+            id: Movies.id,
+            title: Movies.title,
+            description: Movies.description,
+            slug: Movies.slug,
+            image: Movies.image,
+          })
+          .from(Movies)
+          .where(
+            ilike(Movies.title, `%${title}%`),
+          );
+      },
+      [`search-movies-${title}`],
+      {
+        revalidate: 900, // 15 minutes
+        tags: [`search-movies-${title}`],
       },
     )();
   }

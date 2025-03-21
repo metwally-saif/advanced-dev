@@ -15,7 +15,7 @@ export default async function PersonsSection({ personData, type} : { personData:
           {personData.map((actor: any, index: number) => (
             <Link
               key={index}
-              href={`/${type ==='actor' ? 'actors' : 'directors'}/${actor.name}`}
+              href={`/${type}s/${actor.name}`}
               className="flex-shrink-0 w-[100px] sm:w-[120px] md:w-[200px] flex flex-col items-center"
             >
               {/* Circular Image */}
