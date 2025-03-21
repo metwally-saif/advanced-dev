@@ -35,6 +35,47 @@ export async function getHomePageMovies() {
   )();
 }
 
+export async function getHomePageActors() {
+  return await unstable_cache(
+    async () => {
+      return await db
+        .select({
+          id: actor.id,
+          name: actor.name,
+          image: actor.image,
+          age: actor.age,
+        })
+        .from(actor)
+    },
+    [`actors-for-site`],
+    {
+      revalidate: 900,
+      tags: [`actors-for-site`],
+    },
+  )();
+}
+
+
+export async function getHomePageDirectors() {
+  return await unstable_cache(
+    async () => {
+      return await db
+        .select({
+          id: director.id,
+          name: director.name,
+          image: director.image,
+          age: director.age,
+        })
+        .from(director)
+    },
+    [`directors-for-site`],
+    {
+      revalidate: 900,
+      tags: [`directors-for-site`],
+    },
+  )();
+}
+
 export async function getMovieData(slug: string) {
   return await unstable_cache(
     async () => {
@@ -145,7 +186,7 @@ export async function getDirectorDataByName(name: string) {
           director: director,
         })
         .from(director)
-  
+
         .where(
           and(
             eq(director.name, name),
@@ -185,7 +226,7 @@ export async function getMovieActors(movieId: string) : Promise<SelectActor[] | 
   if (!session?.user.id) {
     return { error: "Not authenticated" };
   }
-  
+
   try {
     const movie = await db.query.Movies.findFirst({
       where: eq(Movies.id, movieId),
@@ -197,11 +238,11 @@ export async function getMovieActors(movieId: string) : Promise<SelectActor[] | 
         }
       }
     });
-    
+
     if (!movie) {
       return { error: "Movie not found" };
     }
-    
+
     return movie.movieActors.map(ma => ma.actor);
   } catch (error: any) {
     return { error: error.message };
@@ -214,7 +255,7 @@ export async function getMovieDirectors(movieId: string) {
   if (!session?.user.id) {
     return { error: "Not authenticated" };
   }
-  
+
   try {
     const movie = await db.query.Movies.findFirst({
       where: eq(Movies.id, movieId),
