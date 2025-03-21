@@ -11,13 +11,13 @@ export default function MDX({ source }: { source: MDXRemoteProps }) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [isTruncated, setIsTruncated] = useState(false);
   const [maxHeight, setMaxHeight] = useState<string>("400px"); // Slightly shorter for better truncation
-  
+
   const components = {
     a: replaceLinks,
     BlurImage,
     Tweet,
   };
-  
+
   useEffect(() => {
     const checkHeight = () => {
       if (contentRef.current) {
@@ -26,31 +26,31 @@ export default function MDX({ source }: { source: MDXRemoteProps }) {
         setIsTruncated(fullHeight > visibleHeight);
       }
     };
-    
+
     checkHeight();
     window.addEventListener('resize', checkHeight);
     return () => window.removeEventListener('resize', checkHeight);
   }, [maxHeight, source]);
 
   return (
-    <div className={`transition-all duration-500 ease-in-out container mx-auto px-4`}>
+    <div className={`transition-all duration-500 ease-in-out container mx-auto px-24`}>
       <article
         className={`prose prose-stone max-w-none prose-base dark:prose-invert`}
         suppressHydrationWarning={true}
       >
-        <div 
+        <div
           ref={contentRef}
-          className={`overflow-hidden transition-all duration-500 ease-in-out ${isExpanded ? '' : 'relative'}`} 
+          className={`overflow-hidden transition-all duration-500 ease-in-out ${isExpanded ? '' : 'relative'}`}
           style={{ maxHeight: isExpanded ? '100%' : maxHeight }}
         >
           {/* @ts-ignore */}
           <MDXRemote {...source} components={components} />
-          
+
           {!isExpanded && isTruncated && (
             <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white dark:from-black to-transparent"></div>
           )}
         </div>
-        
+
         {isTruncated && (
           <div className="flex justify-center mt-4 mb-8">
             <button

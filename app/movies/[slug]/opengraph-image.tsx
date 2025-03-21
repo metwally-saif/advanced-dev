@@ -11,24 +11,14 @@ export default async function PostOG({
 }: {
   params: { domain: string; slug: string };
 }) {
-  const domain = decodeURIComponent(params.domain);
   const slug = decodeURIComponent(params.slug);
-
-  const subdomain = domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
-    ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
-    : null;
 
   const response = await sql`
   SELECT post.title, post.description, post.image, "user".name as "authorName", "user".image as "authorImage"
-  FROM "Post" AS post 
-  INNER JOIN "Site" AS site ON post."siteId" = site.id 
-  INNER JOIN "User" AS "user" ON site."userId" = "user".id 
-  WHERE 
-    (
-        site.subdomain = ${subdomain}
-        OR site."customDomain" = ${domain}
-    )
-    AND post.slug = ${slug}
+  FROM "Post" AS post
+  INNER JOIN "User" AS "user" ON post."userId" = "user".id
+  WHERE
+      post.slug = ${slug}
   LIMIT 1;
 `;
 

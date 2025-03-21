@@ -6,13 +6,15 @@ import MDX from "@/components/mdx";
 import { toDateString } from "@/lib/utils";
 import db from "@/lib/db";
 import { Movies } from "@/lib/schema";
+import { isNotNull } from "drizzle-orm";
 
 export async function generateMetadata({
   params,
 }: {
   params: {slug: string };
 }) {
-  const slug = decodeURIComponent(params.slug);
+  const resolvedParams = await Promise.resolve(params);
+  const slug = decodeURIComponent(resolvedParams.slug);
   const data = await getMovieData(slug)
 
   if (!data) {
@@ -23,6 +25,7 @@ export async function generateMetadata({
   return {
     title,
     description,
+    image: data.image,
     openGraph: {
       title,
       description,
@@ -31,17 +34,20 @@ export async function generateMetadata({
       card: "summary_large_image",
       title,
       description,
-      creator: "@vercel",
+      creator: data.user?.name,
+      image: data.image,
     },
   };
 }
 
 export async function generateStaticParams() {
+  try {
   const allPosts = await db
     .select({
       slug: Movies.slug
     })
     .from(Movies)
+    .where(isNotNull(Movies.slug));
 
   const allPaths = allPosts
     .flatMap(({ slug }) => [
@@ -52,7 +58,12 @@ export async function generateStaticParams() {
     ])
     .filter(Boolean);
 
-  return allPaths;
+    return allPaths;
+  }catch (error) {
+      console.error("Error searching movies:", error);
+      return [];
+    }
+
 }
 
 export default async function MovieDetailPage({
@@ -60,8 +71,9 @@ export default async function MovieDetailPage({
 }: {
   params: { slug: string };
 }) {
-  const slug = decodeURIComponent(params.slug);
-  const data = await getMovieData(slug);
+  const resolvedParams = await Promise.resolve(params);
+  const slug = decodeURIComponent(resolvedParams.slug);
+    const data = await getMovieData(slug);
 
   if (!data) {
     notFound();

@@ -1,7 +1,7 @@
 import Link from "next/link";
  import { visit } from "unist-util-visit";
  import { ReactNode } from "react";
- 
+
  export function replaceLinks({
    href,
    children,
@@ -17,17 +17,18 @@ import Link from "next/link";
        {children}
      </Link>
    ) : (
-     <a href={href} target="_blank" rel="noopener noreferrer">
-       {children} ↗
+     <a href={href} target="_blank" rel="noopener noreferrer"
+     style={{ color: "#3182ce" }}>
+       {children}
      </a>
    );
  }
- 
+
  export function replaceTweets() {
    return (tree: any) =>
      new Promise<void>(async (resolve, reject) => {
        const nodesToChange = new Array();
- 
+
        visit(tree, "link", (node: any) => {
          if (
            node.url.match(
@@ -43,11 +44,11 @@ import Link from "next/link";
          try {
            const regex = /\/status\/(\d+)/gm;
            const matches = regex.exec(node.url);
- 
+
            if (!matches) throw new Error(`Failed to get tweet: ${node}`);
- 
+
            const id = matches[1];
- 
+
            node.type = "mdxJsxFlowElement";
            node.name = "Tweet";
            node.attributes = [
@@ -62,7 +63,7 @@ import Link from "next/link";
            return reject(e);
          }
        }
- 
+
        resolve();
      });
  }
