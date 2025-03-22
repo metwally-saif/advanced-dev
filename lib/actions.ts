@@ -21,6 +21,7 @@ import {
   SelectActor,
   SelectDirector,
   SelectMovie,
+  users,
 } from "./schema";
 
 const nanoid = customAlphabet(
@@ -721,3 +722,39 @@ export const removeDirectorFromMovie = withMovieAuth(
     }
   },
 );
+
+export const editUser = async (
+  formData: FormData,
+  _id: unknown,
+  key: string,
+) => {
+  const session = await getSession();
+  if (!session?.user.id) {
+    return {
+      error: "Not authenticated",
+    };
+  }
+  const value = formData.get(key) as string;
+
+  try {
+    const [response] = await db
+      .update(users)
+      .set({
+        [key]: value,
+      })
+      .where(eq(users.id, session.user.id))
+      .returning();
+
+    return response;
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      return {
+        error: `This ${key} is already in use`,
+      };
+    } else {
+      return {
+        error: error.message,
+      };
+    }
+  }
+};
