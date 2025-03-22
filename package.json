@@ -4,7 +4,7 @@
     "dev": "next dev --turbopack",
     "build": "drizzle-kit push && next build",
     "typecheck": "tsc -b tsconfig.json --pretty",
-    "schema_sync": "npx prisma db push",
+    "schema_sync": "npx drizzle-kit push",
     "format:write": "prettier --write \"**/*.{css,js,json,jsx,ts,tsx}\"",
     "format": "prettier \"**/*.{css,js,json,jsx,ts,tsx}\"",
     "start": "next start",

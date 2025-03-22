@@ -1,17 +1,18 @@
-
 "use client";
 
-import LoadingDots from "@/components/icons/loading-dots";
-import { cn } from "@/lib/utils";
-import { useSession } from "next-auth/react";
-import { genres} from '@/lib/schema';
+import va from "@vercel/analytics";
 import { useParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
-import Uploader from "./uploader";
-import va from "@vercel/analytics";
-import { useState } from "react";
+
+import LoadingDots from "@/components/icons/loading-dots";
+import { genres } from "@/lib/schema";
+import { cn } from "@/lib/utils";
+
 import SearchDropdown from "./search-dropdown";
+import Uploader from "./uploader";
 
 export default function Form({
   title,
@@ -39,7 +40,6 @@ export default function Form({
   const { id } = useParams() as { id?: string };
   const router = useRouter();
   const { update } = useSession();
-
 
   return (
     <form
@@ -69,7 +69,8 @@ export default function Form({
         <p className="text-sm text-stone-500 dark:text-stone-400">
           {description}
         </p>
-        {inputAttrs.type === "file" && typeof inputAttrs.defaultValue === "string" ? (
+        {inputAttrs.type === "file" &&
+        typeof inputAttrs.defaultValue === "string" ? (
           <Uploader
             defaultValue={inputAttrs.defaultValue}
             name={inputAttrs.name as "image" | "logo"}
@@ -77,7 +78,7 @@ export default function Form({
         ) : inputAttrs.name === "font" ? (
           <div className="flex max-w-sm items-center overflow-hidden rounded-lg border border-stone-600">
             <select
-            title="Font"
+              title="Font"
               name="font"
               defaultValue={inputAttrs.defaultValue}
               className="w-full rounded-none border-none bg-white px-4 py-2 text-sm font-medium text-stone-700 focus:outline-none focus:ring-black dark:bg-black dark:text-stone-200 dark:focus:ring-white"
@@ -113,21 +114,20 @@ export default function Form({
         ) : inputAttrs.name === "genre" ? (
           <div className="flex max-w-sm items-center overflow-hidden rounded-lg border border-stone-600">
             <select
-            {...inputAttrs}
+              {...inputAttrs}
               name="genre"
               defaultValue={inputAttrs.defaultValue}
               className="w-full rounded-none border-none bg-white px-4 py-2 text-sm font-medium text-stone-700 focus:outline-none focus:ring-black dark:bg-black dark:text-stone-200 dark:focus:ring-white"
             >
-      <option value="">Select a genre</option>
-      {genres.enumValues.map((genreValue) => (
-        <option key={genreValue} value={genreValue}>
-          {genreValue}
-        </option>
-      ))}
+              <option value="">Select a genre</option>
+              {genres.enumValues.map((genreValue) => (
+                <option key={genreValue} value={genreValue}>
+                  {genreValue}
+                </option>
+              ))}
             </select>
           </div>
-        ) :
-         (
+        ) : (
           <input
             {...inputAttrs}
             required

@@ -1,25 +1,32 @@
+import Image from "next/image";
 import Link from "next/link";
-import { placeholderBlurhash } from "@/lib/utils";
-import Image from "next/image"
-import { SelectActor, SelectDirector } from "@/lib/schema";
 
-export default async function PersonsSection({ personData, type} : { personData: SelectActor[] | SelectDirector[], type: string}) {
+import { SelectActor, SelectDirector } from "@/lib/schema";
+import { placeholderBlurhash } from "@/lib/utils";
+
+export default async function PersonsSection({
+  personData,
+  type,
+}: {
+  personData: SelectActor[] | SelectDirector[];
+  type: string;
+}) {
   return (
-    <div className="my-10 py-5 px-4 md:px-8 lg:px-16 w-full">
+    <div className="my-10 w-full px-4 py-5 md:px-8 lg:px-16">
       <h2 className="mb-6 font-title text-3xl md:text-4xl dark:text-white">
         Most Popular {type}s
       </h2>
 
       {personData.length > 0 ? (
-        <div className="flex overflow-x-auto space-x-6">
-          {personData.map((actor: any, index: number) => (
+        <div className="flex space-x-6 overflow-x-auto">
+          {personData.map((actor: any, _: number) => (
             <Link
-              key={index}
+              key={`${actor.name}`}
               href={`/${type}s/${actor.name}`}
-              className="flex-shrink-0 w-[100px] sm:w-[120px] md:w-[200px] flex flex-col items-center"
+              className="flex w-[100px] flex-shrink-0 flex-col items-center sm:w-[120px] md:w-[200px]"
             >
               {/* Circular Image */}
-              <div className="relative w-44 h-44  rounded-full overflow-hidden">
+              <div className="relative h-44 w-44  overflow-hidden rounded-full">
                 <Image
                   alt={actor.name ?? "Actor Image"}
                   src={actor.image ?? placeholderBlurhash}
@@ -29,12 +36,12 @@ export default async function PersonsSection({ personData, type} : { personData:
               </div>
 
               {/* Actor Name */}
-              <h3 className="mt-2 font-title text-sm sm:text-base text-stone-800 dark:text-white text-center">
+              <h3 className="mt-2 text-center font-title text-sm text-stone-800 sm:text-base dark:text-white">
                 {actor.name}
               </h3>
 
               {/* Optional short bio or tagline */}
-              <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 text-center">
+              <p className="text-center text-xs text-stone-600 sm:text-sm dark:text-stone-300">
                 {actor.bio || "Featured in multiple films"}
               </p>
             </Link>
@@ -48,5 +55,5 @@ export default async function PersonsSection({ personData, type} : { personData:
         </div>
       )}
     </div>
-  )
+  );
 }

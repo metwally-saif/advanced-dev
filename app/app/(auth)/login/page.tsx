@@ -1,6 +1,7 @@
 import Image from "next/image";
-import LoginButton from "./login-button";
 import { Suspense } from "react";
+
+import LoginButton from "./login-button";
 
 export default function LoginPage() {
   return (
@@ -15,7 +16,6 @@ export default function LoginPage() {
       <h1 className="mt-6 text-center font-cal text-3xl dark:text-white">
         Movies Database
       </h1>
-
 
       <div className="mx-auto mt-4 w-11/12 max-w-xs sm:w-full">
         <Suspense

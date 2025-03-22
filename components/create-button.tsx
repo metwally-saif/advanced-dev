@@ -1,37 +1,41 @@
 "use client";
 
-import { useTransition } from "react";
-import { createMovie, createActor, createDirector } from "@/lib/actions";
-import { cn } from "@/lib/utils";
-import { useParams, useRouter } from "next/navigation";
-import LoadingDots from "@/components/icons/loading-dots";
 import va from "@vercel/analytics";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 
-
+import LoadingDots from "@/components/icons/loading-dots";
+import { createActor, createDirector, createMovie } from "@/lib/actions";
+import { cn } from "@/lib/utils";
 
 export default function CreateButton({
   type,
-} : {
+}: {
   type: "ACTOR" | "MOVIE" | "DIRECTOR";
 }) {
   const router = useRouter();
-  const { id } = useParams() as { id: string };
   const [isPending, startTransition] = useTransition();
 
   return (
     <button
-    type="button"
+      type="button"
       onClick={() =>
         startTransition(async () => {
-          const entity = type === "ACTOR" ? createActor : type === "DIRECTOR" ? createDirector : createMovie;
+          const entity =
+            type === "ACTOR"
+              ? createActor
+              : type === "DIRECTOR"
+                ? createDirector
+                : createMovie;
           const res = await entity(new FormData());
           va.track(`Create ${type}`);
           router.refresh();
-          if ('id' in res) {
+          if ("id" in res) {
             router.push(`/app/${type.toLowerCase()}/${res.id}`);
           } else {
             // Handle error case
-            console.error( res.error);
+            // eslint-disable-next-line no-console
+            console.error(res.error);
           }
         })
       }
@@ -43,8 +47,11 @@ export default function CreateButton({
       )}
       disabled={isPending}
     >
-      {isPending ? <LoadingDots color="#808080" /> : <p>Create {type.charAt(0) + type.slice(1).toLowerCase()}</p>}
+      {isPending ? (
+        <LoadingDots color="#808080" />
+      ) : (
+        <p>Create {type.charAt(0) + type.slice(1).toLowerCase()}</p>
+      )}
     </button>
-  );       
-
+  );
 }

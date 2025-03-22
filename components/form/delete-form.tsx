@@ -1,22 +1,37 @@
 "use client";
 
-import LoadingDots from "@/components/icons/loading-dots";
-import { cn } from "@/lib/utils";
+import va from "@vercel/analytics";
 import { useParams, useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
-import { deleteMovie, deleteActor, deleteDirector } from "@/lib/actions";
-import va from "@vercel/analytics";
 
-export default function DeleteForm({ Title, type }: { Title: string, type: "ACTOR" | "MOVIE" | "DIRECTOR" }) {
+import LoadingDots from "@/components/icons/loading-dots";
+import { deleteActor, deleteDirector, deleteMovie } from "@/lib/actions";
+import { cn } from "@/lib/utils";
+
+export default function DeleteForm({
+  Title,
+  type,
+}: {
+  Title: string;
+  type: "ACTOR" | "MOVIE" | "DIRECTOR";
+}) {
   const { id } = useParams() as { id: string };
   const router = useRouter();
-  const entity = type === "ACTOR" ? deleteActor : type === "DIRECTOR" ? deleteDirector : deleteMovie;
+  const entity =
+    type === "ACTOR"
+      ? deleteActor
+      : type === "DIRECTOR"
+        ? deleteDirector
+        : deleteMovie;
 
   return (
     <form
       action={async (data: FormData) =>
-        window.confirm(`Are you sure you want to delete ${type.toLocaleLowerCase()}?`) &&
+        // eslint-disable-next-line no-alert
+        window.confirm(
+          `Are you sure you want to delete ${type.toLocaleLowerCase()}?`,
+        ) &&
         entity(data, id, "delete").then((res) => {
           if (res.error) {
             toast.error(res.error);
@@ -31,10 +46,12 @@ export default function DeleteForm({ Title, type }: { Title: string, type: "ACTO
       className="rounded-lg border border-red-600 bg-white dark:bg-black"
     >
       <div className="relative flex flex-col space-y-4 p-5 sm:p-10">
-        <h2 className="font-cal text-xl dark:text-white">Delete {type.toLocaleLowerCase()}</h2>
+        <h2 className="font-cal text-xl dark:text-white">
+          Delete {type.toLocaleLowerCase()}
+        </h2>
         <p className="text-sm text-stone-500 dark:text-stone-400">
-          Deletes {type.toLocaleLowerCase()} permanently. Type in the name of the {type.toLocaleLowerCase()}{" "}
-          <b>{Title}</b> to confirm.
+          Deletes {type.toLocaleLowerCase()} permanently. Type in the name of
+          the {type.toLocaleLowerCase()} <b>{Title}</b> to confirm.
         </p>
 
         <input

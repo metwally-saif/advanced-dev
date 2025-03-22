@@ -1,4 +1,4 @@
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { PgSelect } from "drizzle-orm/pg-core";
 import { twMerge } from "tailwind-merge";
 
@@ -15,12 +15,16 @@ export async function fetcher<JSON = any>(
 }
 
 export const capitalize = (s: string) => {
-  if (typeof s !== "string") return "";
+  if (typeof s !== "string") {
+    return "";
+  }
   return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
 export const truncate = (str: string, num: number) => {
-  if (!str) return "";
+  if (!str) {
+    return "";
+  }
   if (str.length <= num) {
     return str;
   }
@@ -69,6 +73,10 @@ type NonNullableProps<T> = {
 
 export function stripUndefined<T>(obj: T): Pick<T, NonNullableProps<T>> {
   const result = {} as T;
-  for (const key in obj) if (obj[key] !== undefined) result[key] = obj[key];
+  for (const key in obj) {
+    if (obj[key] !== undefined) {
+      result[key] = obj[key];
+    }
+  }
   return result;
 }

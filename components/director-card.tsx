@@ -1,12 +1,10 @@
-import type { SelectDirector } from "@/lib/schema";;
 import Link from "next/link";
+
+import type { SelectDirector } from "@/lib/schema";
+
 import BlurImage from "./blur-image";
 
-export default function MovieCard({
-  data,
-}: {
-  data: SelectDirector;
-}) {
+export default function MovieCard({ data }: { data: SelectDirector }) {
   const url = `/directors/${data.name}`;
 
   return (
@@ -15,17 +13,16 @@ export default function MovieCard({
         href={`/app/director/${data.id}`}
         className="flex flex-col overflow-hidden rounded-lg"
       >
-                <div className="relative h-44 overflow-hidden">
-                          <BlurImage
-                            src={data.image!}
-                            alt={data.name ?? "director"}
-                            width={500}
-                            height={400}
-                            className="h-64 w-full object-cover"
-                          />
-                </div>
+        <div className="relative h-44 overflow-hidden">
+          <BlurImage
+            src={data.image || "/placeholder.png"}
+            alt={data.name ?? "director"}
+            width={500}
+            height={400}
+            className="h-64 w-full object-cover"
+          />
+        </div>
         <div className="border-t border-stone-200 p-4 dark:border-stone-700">
-          
           <h3 className="my-0 truncate font-cal text-xl font-bold tracking-wide dark:text-white">
             {data.name}
           </h3>

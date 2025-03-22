@@ -1,24 +1,19 @@
-import { getSession } from "@/lib/auth";
-import db from "@/lib/db";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+
+import { getSession } from "@/lib/auth";
+import db from "@/lib/db";
+
 import MovieCard from "./post-card";
 
-export default async function Movies({
-  limit,
-}: {
-  limit?: number;
-}) {
+export default async function Movies({ limit }: { limit?: number }) {
   const session = await getSession();
   if (!session?.user) {
     redirect("/app/login");
   }
 
   const userMovies = await db.query.Movies.findMany({
-    where: (movies, { and, eq }) =>
-      and(
-        eq(movies.userId, session.user.id),
-      ),
+    where: (movies, { and, eq }) => and(eq(movies.userId, session.user.id)),
     orderBy: (movies, { desc }) => desc(movies.updatedAt),
     ...(limit ? { limit } : {}),
   });

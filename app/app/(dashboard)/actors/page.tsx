@@ -1,17 +1,14 @@
-import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
+
 import Actors from "@/components/actors";
 import CreateButton from "@/components/create-button";
+import { getSession } from "@/lib/auth";
 
-export default async function ActorsOverview({
-}: {
-}) {
+export default async function ActorsOverview({}: {}) {
   const session = await getSession();
   if (!session) {
     redirect("/login");
   }
-
-
 
   return (
     <>
@@ -21,7 +18,7 @@ export default async function ActorsOverview({
             All Actors
           </h1>
         </div>
-        <CreateButton type="ACTOR"/>
+        <CreateButton type="ACTOR" />
       </div>
       <Actors />
     </>

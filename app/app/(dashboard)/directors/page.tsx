@@ -1,17 +1,14 @@
-import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import Directors from "@/components/directors";
-import CreateButton from "@/components/create-button";
 
-export default async function DirectorsList({
-}: {
-}) {
+import CreateButton from "@/components/create-button";
+import Directors from "@/components/directors";
+import { getSession } from "@/lib/auth";
+
+export default async function DirectorsList({}: {}) {
   const session = await getSession();
   if (!session) {
     redirect("/login");
   }
-
-
 
   return (
     <>
@@ -21,7 +18,7 @@ export default async function DirectorsList({
             All Directors
           </h1>
         </div>
-        <CreateButton type='DIRECTOR'/>
+        <CreateButton type="DIRECTOR" />
       </div>
       <Directors />
     </>

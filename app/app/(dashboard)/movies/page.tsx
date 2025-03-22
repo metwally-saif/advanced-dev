@@ -1,17 +1,14 @@
-import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import Movies from "@/components/movies";
-import CreateButton from "@/components/create-button";
 
-export default async function MovieList({
-}: {
-}) {
+import CreateButton from "@/components/create-button";
+import Movies from "@/components/movies";
+import { getSession } from "@/lib/auth";
+
+export default async function MovieList({}: {}) {
   const session = await getSession();
   if (!session) {
     redirect("/login");
   }
-
-
 
   return (
     <>
@@ -21,7 +18,7 @@ export default async function MovieList({
             All Movies
           </h1>
         </div>
-        <CreateButton type="MOVIE"/>
+        <CreateButton type="MOVIE" />
       </div>
       <Movies />
     </>

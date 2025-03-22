@@ -1,7 +1,9 @@
 import Link from "next/link";
-import BlurImage from "./blur-image";
-import { toDateString } from "@/lib/utils";
+
 import type { SelectMovie } from "@/lib/schema";
+import { toDateString } from "@/lib/utils";
+
+import BlurImage from "./blur-image";
 
 interface MovieCardProps {
   data: Pick<
@@ -15,7 +17,7 @@ export default function MovieCard({ data }: MovieCardProps) {
     <Link href={`/movies/${data.slug}`}>
       <div className="ease overflow-hidden rounded-2xl border-2 border-stone-100 bg-white shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-xl dark:border-stone-800">
         <BlurImage
-          src={data.image!}
+          src={data.image ?? "/placeholder.png"}
           alt={data.title ?? "Blog Post"}
           width={500}
           height={400}

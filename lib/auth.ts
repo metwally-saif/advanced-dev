@@ -1,8 +1,9 @@
-import { getServerSession, type NextAuthOptions } from "next-auth";
-import GitHubProvider from "next-auth/providers/github";
-import db from "./db";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { getServerSession, type NextAuthOptions } from "next-auth";
 import { Adapter } from "next-auth/adapters";
+import GitHubProvider from "next-auth/providers/github";
+
+import db from "./db";
 import { accounts, sessions, users, verificationTokens } from "./schema";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
@@ -61,19 +62,18 @@ export const authOptions: NextAuthOptions = {
       };
       return session;
     },
-    redirect: async ({ url, baseUrl } : { url :string, baseUrl: string}) => {
-          // If the user is already on the app, maintain the URL
-    if (url.startsWith(baseUrl)) {
-      // Default is to return to homepage after login
-      if (url.includes("/login")) {
-        return `${baseUrl}/app`;  // Or whatever default post-login path
+    redirect: async ({ url, baseUrl }: { url: string; baseUrl: string }) => {
+      // If the user is already on the app, maintain the URL
+      if (url.startsWith(baseUrl)) {
+        // Default is to return to homepage after login
+        if (url.includes("/login")) {
+          return `${baseUrl}/app`; // Or whatever default post-login path
+        }
+        return url;
       }
-      return url;
-    }
-    // Otherwise, redirect to dashboard
-    return `${baseUrl}/app`;
-  },
-  
+      // Otherwise, redirect to dashboard
+      return `${baseUrl}/app`;
+    },
   },
 };
 
@@ -88,7 +88,6 @@ export function getSession() {
     };
   } | null>;
 }
-
 
 export function withMovieAuth(action: any) {
   return async (

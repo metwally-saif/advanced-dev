@@ -1,14 +1,12 @@
-import { getSession } from "@/lib/auth";
-import db from "@/lib/db";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+
+import { getSession } from "@/lib/auth";
+import db from "@/lib/db";
+
 import ActorCard from "./actor-card";
 
-export default async function Actors({
-  limit,
-}: {
-  limit?: number;
-}) {
+export default async function Actors({ limit }: { limit?: number }) {
   const session = await getSession();
   if (!session?.user) {
     redirect("/app/login");
@@ -34,9 +32,7 @@ export default async function Actors({
         width={400}
         height={400}
       />
-      <p className="text-lg text-stone-500">
-        No actors yet.
-      </p>
+      <p className="text-lg text-stone-500">No actors yet.</p>
     </div>
   );
 }

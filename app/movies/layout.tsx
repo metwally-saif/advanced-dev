@@ -1,6 +1,5 @@
-import Link from "next/link";
-import { ReactNode } from "react";
 import { Metadata } from "next";
+import { ReactNode } from "react";
 
 export async function generateMetadata({
   params,
@@ -33,8 +32,6 @@ export default async function MainLayout({
 }: {
   children: ReactNode;
 }) {
-
-
   return (
     <div className="min-h-screen bg-white dark:bg-black dark:text-white">
       <div className="mt-20">{children}</div>

@@ -1,12 +1,10 @@
-import type { SelectMovie } from "@/lib/schema";;
 import Link from "next/link";
+
+import type { SelectMovie } from "@/lib/schema";
+
 import BlurImage from "./blur-image";
 
-export default function MovieCard({
-  data,
-}: {
-  data: SelectMovie;
-}) {
+export default function MovieCard({ data }: { data: SelectMovie }) {
   const url = `/movies/${data.slug}`;
 
   return (
@@ -16,13 +14,13 @@ export default function MovieCard({
         className="flex flex-col overflow-hidden rounded-lg"
       >
         <div className="relative h-44 overflow-hidden">
-                  <BlurImage
-                    src={data.image! ?? ""}
-                    alt={data.title ?? "movie"}
-                    width={500}
-                    height={400}
-                    className="h-64 w-full object-cover"
-                  />
+          <BlurImage
+            src={data.image || "/placeholder.png"}
+            alt={data.title ?? "movie"}
+            width={500}
+            height={400}
+            className="h-64 w-full object-cover"
+          />
           {!data.published && (
             <span className="absolute bottom-2 right-2 rounded-md border border-stone-200 bg-white px-3 py-0.5 text-sm font-medium text-stone-600 shadow-md">
               Draft

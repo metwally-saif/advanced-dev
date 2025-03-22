@@ -1,10 +1,11 @@
-import Link from "next/link";
-import { placeholderBlurhash, toDateString } from "@/lib/utils";
 import Image from "next/image";
+import Link from "next/link";
+
 import { SelectUser } from "@/lib/schema";
+import { placeholderBlurhash, toDateString } from "@/lib/utils";
 
 interface MoviesSectionProps {
-  movieData: MovieData[]
+  movieData: MovieData[];
 }
 
 interface MovieData {
@@ -17,15 +18,13 @@ interface MovieData {
 }
 
 export default async function MoviesSection({ movieData }: MoviesSectionProps) {
-
-
   return (
     <>
-      <div className="my-10 py-5 px-4 md:px-8 lg:px-16 w-full">
-      {movieData.length > 0 ? (
-          <div className="flex flex-col lg:flex-row w-full gap-8">
+      <div className="my-10 w-full px-4 py-5 md:px-8 lg:px-16">
+        {movieData.length > 0 ? (
+          <div className="flex w-full flex-col gap-8 lg:flex-row">
             {/* Main featured movie - left side taking 2/3 width */}
-            <div className="lg:w-2/3 flex-shrink-0">
+            <div className="flex-shrink-0 lg:w-2/3">
               <Link href={`/movies/${movieData[0].slug}`} className="block">
                 <div className="group relative h-[32rem] w-full overflow-hidden rounded-xl">
                   <Image
@@ -37,11 +36,11 @@ export default async function MoviesSection({ movieData }: MoviesSectionProps) {
                   />
                   {/* Title overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent">
-                    <div className="absolute bottom-0 p-6 w-full">
-                      <h2 className="font-title text-3xl md:text-5xl text-white mb-3 drop-shadow-lg">
+                    <div className="absolute bottom-0 w-full p-6">
+                      <h2 className="mb-3 font-title text-3xl text-white drop-shadow-lg md:text-5xl">
                         {movieData[0].title}
                       </h2>
-                      <p className="text-sm md:text-base text-white/90 line-clamp-2 mb-3 drop-shadow-md">
+                      <p className="mb-3 line-clamp-2 text-sm text-white/90 drop-shadow-md md:text-base">
                         {movieData[0].description}
                       </p>
                       <div className="flex items-center space-x-4">
@@ -76,16 +75,16 @@ export default async function MoviesSection({ movieData }: MoviesSectionProps) {
 
             {/* More movies - right side taking 1/3 width */}
             {movieData.length > 1 && (
-              <div className="lg:w-1/3 flex-grow">
+              <div className="flex-grow lg:w-1/3">
                 <h2 className="mb-4 font-title text-2xl md:text-3xl dark:text-white">
                   More Movies
                 </h2>
-                <div className="grid grid-cols-1 gap-4 h-[32rem] overflow-hidden">
-                  {movieData.slice(1, 4).map((metadata: any, index: number) => (
+                <div className="grid h-[32rem] grid-cols-1 gap-4 overflow-hidden">
+                  {movieData.slice(1, 4).map((metadata: any, _: number) => (
                     <Link
-                      key={index}
+                      key={`${metadata.slug}`}
                       href={`/movies/${metadata.slug}`}
-                      className="block relative h-[10rem] overflow-hidden rounded-lg"
+                      className="relative block h-[10rem] overflow-hidden rounded-lg"
                     >
                       <Image
                         alt={metadata.title ?? "Movie Image"}
@@ -94,12 +93,12 @@ export default async function MoviesSection({ movieData }: MoviesSectionProps) {
                         objectFit="cover"
                         className="transition-transform duration-300 hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/20 flex items-end">
+                      <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 to-black/20">
                         <div className="p-3">
                           <h3 className="font-title text-lg text-white drop-shadow-md">
                             {metadata.title}
                           </h3>
-                          <p className="text-xs text-white/80 line-clamp-1">
+                          <p className="line-clamp-1 text-xs text-white/80">
                             {metadata.description}
                           </p>
                         </div>

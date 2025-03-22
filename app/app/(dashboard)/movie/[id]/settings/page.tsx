@@ -1,12 +1,22 @@
-import { getSession } from "@/lib/auth";
 import { notFound, redirect } from "next/navigation";
+
 import Form from "@/components/form";
-import { updateMovieMetadata, addActorToMovie, removeActorFromMovie, addDirectorToMovie, removeDirectorFromMovie } from "@/lib/actions";
 import DeleteForm from "@/components/form/delete-form";
-import { getMovieActors, getMovieDirectors } from "@/lib/fetchers";
-import { searchActorsByName, searchDirectorsByName } from "@/lib/search-functions";
-import db from "@/lib/db";
 import PersonsList from "@/components/persons-list";
+import {
+  addActorToMovie,
+  addDirectorToMovie,
+  removeActorFromMovie,
+  removeDirectorFromMovie,
+  updateMovieMetadata,
+} from "@/lib/actions";
+import { getSession } from "@/lib/auth";
+import db from "@/lib/db";
+import { getMovieActors, getMovieDirectors } from "@/lib/fetchers";
+import {
+  searchActorsByName,
+  searchDirectorsByName,
+} from "@/lib/search-functions";
 
 export default async function MovieSettingsPage({
   params,
@@ -76,17 +86,16 @@ export default async function MovieSettingsPage({
           inputAttrs={{
             name: "actorId",
             type: "text",
-            defaultValue: ""
+            defaultValue: "",
           }}
           handleSubmit={addActorToMovie}
         />
         <PersonsList
-        title="Actors"
+          title="Actors"
           persons={Array.isArray(actors) ? actors : []}
           removePerson={removeActorFromMovie}
           data={data}
-          />
-
+        />
 
         <Form
           title="Directors"
@@ -96,20 +105,17 @@ export default async function MovieSettingsPage({
           inputAttrs={{
             name: "directorId",
             type: "text",
-            defaultValue: ""
+            defaultValue: "",
           }}
           handleSubmit={addDirectorToMovie}
         />
 
-        <PersonsList 
-        title="Directors"
+        <PersonsList
+          title="Directors"
           persons={Array.isArray(directors) ? directors : []}
           removePerson={removeDirectorFromMovie}
           data={data}
-          />
-
-
-      
+        />
 
         <DeleteForm Title={data?.title!} type="MOVIE" />
       </div>

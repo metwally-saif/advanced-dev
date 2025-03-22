@@ -1,13 +1,15 @@
 import "@/styles/globals.css";
-import { cal, inter } from "@/styles/fonts";
-import { Analytics } from "@vercel/analytics/react";
-import { Providers } from "./providers";
-import { Metadata } from "next";
-import { cn } from "@/lib/utils";
-import ClientNav from "@/components/client-nav";
 
-const title =
-  "Movies database with Next.js, Prisma, and PostgreSQL";
+import { Analytics } from "@vercel/analytics/react";
+import { Metadata } from "next";
+
+import ClientNav from "@/components/client-nav";
+import { cn } from "@/lib/utils";
+import { cal, inter } from "@/styles/fonts";
+
+import { Providers } from "./providers";
+
+const title = "Movies database with Next.js, Prisma, and PostgreSQL";
 const description =
   "movies database with authentication, CRUD operations, and analytics. Built by Saif";
 const image = "https://vercel.pub/thumbnail.png";

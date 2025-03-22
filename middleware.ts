@@ -38,9 +38,10 @@ export default async function middleware(req: NextRequest) {
     searchParams.length > 0 ? `?${searchParams}` : ""
   }`;
 
-  if (hostname === "localhost:3000" || hostname === process.env.NEXT_PUBLIC_ROOT_DOMAIN) {
-
-
+  if (
+    hostname === "localhost:3000" ||
+    hostname === process.env.NEXT_PUBLIC_ROOT_DOMAIN
+  ) {
     // App routes - accessed directly without subdomain
     if (path.startsWith("/app")) {
       const session = await getToken({ req });
@@ -50,15 +51,13 @@ export default async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL("/app", req.url));
       }
       return NextResponse.rewrite(
-        new URL(`/app${path === "/app" ? "" : path.substring(4)}`, req.url)
+        new URL(`/app${path === "/app" ? "" : path.substring(4)}`, req.url),
       );
     }
 
     // Let all other paths pass through normally
     return NextResponse.next();
   }
-
-        
 
   // rewrite root application to `/home` folder
   if (

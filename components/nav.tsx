@@ -1,33 +1,29 @@
 "use client";
 
-import Link from "next/link";
 import {
   ArrowLeft,
   Edit3,
-  RockingChair,
-  PersonStanding,
   Film,
   LayoutDashboard,
   Menu,
+  PersonStanding,
+  RockingChair,
   Settings,
 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import {
   useParams,
   usePathname,
   useSelectedLayoutSegments,
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 
 export default function Nav({ children }: { children: ReactNode }) {
   const segments = useSelectedLayoutSegments();
   const { id } = useParams() as { id?: string };
 
-
-
-
   const tabs = useMemo(() => {
-
     if (segments[0] === "movie" && id) {
       return [
         {
@@ -94,15 +90,16 @@ export default function Nav({ children }: { children: ReactNode }) {
   return (
     <>
       <button
-      type="button"
-        className={`fixed z-20 ${          
+        type="button"
+        className={`fixed z-20 ${
           segments[0] === "movie" && segments.length === 2 && !showSidebar
             ? "left-5 top-5"
             : "right-5 top-7"
         } sm:hidden`}
         onClick={() => setShowSidebar(!showSidebar)}
       >
-        {""}<Menu width={20} />
+        {""}
+        <Menu width={20} />
       </button>
       <div
         className={`transform ${

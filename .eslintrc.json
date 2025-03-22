@@ -1,24 +1,10 @@
 {
   "extends": "next/core-web-vitals",
-  "ignorePatterns": ["**/*"],
   "plugins": ["react", "simple-import-sort", "unused-imports"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        "@nx/enforce-module-boundaries": [
-          "error",
-          {
-            "enforceBuildableLibDependency": true,
-            "allow": [],
-            "depConstraints": [
-              {
-                "sourceTag": "*",
-                "onlyDependOnLibsWithTags": ["*"]
-              }
-            ]
-          }
-        ],
         "simple-import-sort/imports": "error",
         "simple-import-sort/exports": "error",
         "unused-imports/no-unused-imports": "error",

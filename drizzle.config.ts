@@ -5,6 +5,6 @@ export default defineConfig({
   out: "./drizzle/migrations",
   dialect: "postgresql",
   dbCredentials: {
-    url: process.env.POSTGRES_URL!,
+    url: "postgres://neondb_owner:npg_5udLiGJ6CEQe@ep-flat-union-a29y4lgl-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require",
   },
 });

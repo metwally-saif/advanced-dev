@@ -1,9 +1,14 @@
-import { getSession } from "@/lib/auth";
 import { notFound, redirect } from "next/navigation";
+
 import Editor from "@/components/editor";
+import { getSession } from "@/lib/auth";
 import db from "@/lib/db";
 
-export default async function MoviePage({ params }: { params: { id: string } }) {
+export default async function MoviePage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const session = await getSession();
   if (!session) {
     redirect("/login");

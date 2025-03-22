@@ -8,8 +8,6 @@ module.exports = {
     },
   },
   images: {
-    remotePatterns: [
-      { hostname: "*"}
-    ],
+    remotePatterns: [{ hostname: "*" }],
   },
 };

@@ -1,6 +1,8 @@
+/* eslint-disable react/no-array-index-key */
 import { Suspense } from "react";
-import OverviewStats from "@/components/overview-stats";
+
 import Movies from "@/components/movies";
+import OverviewStats from "@/components/overview-stats";
 import PlaceholderCard from "@/components/placeholder-card";
 
 export default function Overview() {
@@ -18,12 +20,11 @@ export default function Overview() {
           fallback={
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {Array.from({ length: 4 }).map((_, i) => (
-                <PlaceholderCard key={i} />
+                <PlaceholderCard key={`${i}th`} />
               ))}
             </div>
           }
-        >
-        </Suspense>
+        />
       </div>
 
       <div className="flex flex-col space-y-6">
