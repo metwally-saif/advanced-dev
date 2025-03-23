@@ -11,6 +11,7 @@ import LoadingDots from "@/components/icons/loading-dots";
 import { genres } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 
+import DatePicker from "./date-picker";
 import SearchDropdown from "./search-dropdown";
 import Uploader from "./uploader";
 
@@ -29,7 +30,7 @@ export default function Form({
   inputAttrs: {
     name: string;
     type: React.HTMLInputTypeAttribute;
-    defaultValue: string | number;
+    defaultValue: string | number | any;
     placeholder?: string;
     maxLength?: number;
     pattern?: string;
@@ -37,6 +38,7 @@ export default function Form({
   handleSubmit: any;
 }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [date, setDate] = useState<Date | null>(null);
   const { id } = useParams() as { id?: string };
   const router = useRouter();
   const { update } = useSession();
@@ -46,6 +48,13 @@ export default function Form({
       action={async (data: FormData) => {
         if (inputAttrs.name === "actorId" || inputAttrs.name === "directorId") {
           data.set(inputAttrs.name, selectedId || "");
+        }
+        if (inputAttrs.type === "date") {
+          if (date) {
+            data.set(inputAttrs.name, date.toISOString());
+          } else {
+            data.set(inputAttrs.name, "");
+          }
         }
         handleSubmit(data, id, inputAttrs.name).then(async (res: any) => {
           if (res.error) {
@@ -88,6 +97,13 @@ export default function Form({
               <option value="font-work">Work Sans</option>
             </select>
           </div>
+        ) : inputAttrs.type === "date" ? (
+          <DatePicker
+            {...inputAttrs}
+            defaultValue={inputAttrs.defaultValue?.toString()}
+            required={true}
+            onSelect={(date: Date) => setDate(date)}
+          />
         ) : inputAttrs.name === "description" ? (
           <textarea
             {...inputAttrs}
@@ -143,7 +159,7 @@ export default function Form({
   );
 }
 
-function FormButton() {
+export function FormButton() {
   const { pending } = useFormStatus();
   return (
     <button

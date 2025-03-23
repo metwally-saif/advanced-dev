@@ -441,9 +441,19 @@ export const updateMovieMetadata = withMovieAuth(
 
 export const updateActorMetadata = withActorAuth(
   async (formData: FormData, selectedActor: SelectActor, key: string) => {
-    const value = formData.get(key) as string;
+    let value = formData.get(key) as string;
 
     try {
+      if (key === "birthdate" || key.includes("date")) {
+        if (!value) {
+          value = null as any;
+        } else if (
+          typeof value === "string" &&
+          value.match(/^\d{4}-\d{2}-\d{2}/)
+        ) {
+          value = new Date(value) as any;
+        }
+      }
       const response = await db
         .update(actor)
         .set({

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import CreateButton from "@/components/create-button";
-import Movies from "@/components/movies";
+import MovieGallery from "@/components/movies";
 import { getSession } from "@/lib/auth";
 
 export default async function MovieList({}: {}) {
@@ -20,7 +20,7 @@ export default async function MovieList({}: {}) {
         </div>
         <CreateButton type="MOVIE" />
       </div>
-      <Movies />
+      <MovieGallery />
     </>
   );
 }

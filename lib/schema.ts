@@ -33,6 +33,8 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
+  location: text("location"),
+  isAdmin: boolean("isAdmin").default(false).notNull(),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
   updatedAt: timestamp("updatedAt", { mode: "date" })
     .notNull()
@@ -84,6 +86,8 @@ export const accounts = pgTable(
     expires_at: integer("expires_at"),
     token_type: text("token_type"),
     scope: text("scope"),
+    location: text("location"),
+    isAdmin: boolean("isAdmin").default(false).notNull(),
     id_token: text("id_token"),
     session_state: text("session_state"),
     oauth_token_secret: text("oauth_token_secret"),
@@ -168,6 +172,9 @@ export const actor = pgTable(
       .$defaultFn(() => createId()),
     name: text("name"),
     image: text("image"),
+    description: text("description"),
+    birthdate: timestamp("birthdate", { mode: "date" }),
+    media: text("media").array(),
     age: integer("age"),
   },
   (table) => {
@@ -243,6 +250,9 @@ export const director = pgTable(
       .$defaultFn(() => createId()),
     name: text("name"),
     image: text("image"),
+    description: text("description"),
+    birthdate: timestamp("birthdate", { mode: "date" }),
+    media: text("media").array(),
     age: integer("age"),
   },
   (table) => {

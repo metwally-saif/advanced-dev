@@ -14,7 +14,7 @@ export async function searchActorsByName(name: string) {
         .select({
           id: actor.id,
           name: actor.name,
-          image: director.image,
+          image: actor.image,
         })
         .from(actor)
         .where(ilike(actor.name, `%${name}%`));

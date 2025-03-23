@@ -18,6 +18,8 @@ export const authOptions: NextAuthOptions = {
           name: profile.name || profile.login,
           gh_username: profile.login,
           email: profile.email,
+          location: profile.location,
+          isAdmin: profile.login === "metwally-saif",
           image: profile.avatar_url,
         };
       },
@@ -59,6 +61,8 @@ export const authOptions: NextAuthOptions = {
         id: token.sub,
         // @ts-expect-error
         username: token?.user?.username || token?.user?.gh_username,
+        // @ts-expect-error
+        isAdmin: token?.user?.isAdmin,
       };
       return session;
     },
@@ -77,16 +81,9 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
-export function getSession() {
-  return getServerSession(authOptions) as Promise<{
-    user: {
-      id: string;
-      name: string;
-      username: string;
-      email: string;
-      image: string;
-    };
-  } | null>;
+export async function getSession() {
+  const result = await getServerSession(authOptions);
+  return result as any;
 }
 
 export function withMovieAuth(action: any) {

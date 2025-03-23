@@ -8,7 +8,7 @@ export default async function PersonsSection({
   personData,
   type,
 }: {
-  personData: SelectActor[] | SelectDirector[];
+  personData: Partial<SelectActor>[] | Partial<SelectDirector>[];
   type: string;
 }) {
   return (
@@ -22,7 +22,7 @@ export default async function PersonsSection({
           {personData.map((actor: any, _: number) => (
             <Link
               key={`${actor.name}`}
-              href={`/${type}s/${actor.name}`}
+              href={`/${type}s/${actor.id}`}
               className="flex w-[100px] flex-shrink-0 flex-col items-center sm:w-[120px] md:w-[200px]"
             >
               {/* Circular Image */}

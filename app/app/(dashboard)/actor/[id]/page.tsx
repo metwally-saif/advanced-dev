@@ -55,6 +55,32 @@ export default async function ActorPage({
         />
 
         <Form
+          title="Actor birthdate"
+          description="The birthdate of the Actor"
+          helpText="Please use the birthdate of the Actor."
+          inputAttrs={{
+            name: "birthdate",
+            type: "date",
+            defaultValue: data?.birthdate!,
+            placeholder: "Birthdate",
+          }}
+          handleSubmit={updateActorMetadata}
+        />
+
+        <Form
+          title="Actor description"
+          description="The description of the Actor"
+          helpText="Please use the description of the Actor."
+          inputAttrs={{
+            name: "description",
+            type: "text",
+            defaultValue: data?.description!,
+            placeholder: "Description",
+          }}
+          handleSubmit={updateActorMetadata}
+        />
+
+        <Form
           title="Actor Image"
           description="The image for the Actor"
           helpText="Please use a high-quality image url."

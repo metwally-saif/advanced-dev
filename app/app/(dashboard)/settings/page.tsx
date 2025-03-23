@@ -7,7 +7,7 @@ import { getSession } from "@/lib/auth";
 export default async function SettingsPage() {
   const session = await getSession();
   if (!session) {
-    redirect("/login");
+    redirect("/app/login");
   }
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12 p-8">

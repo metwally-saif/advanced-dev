@@ -1,11 +1,18 @@
 /* eslint-disable react/no-array-index-key */
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
-import Movies from "@/components/movies";
+import MovieGallery from "@/components/movies";
 import OverviewStats from "@/components/overview-stats";
 import PlaceholderCard from "@/components/placeholder-card";
+import { getSession } from "@/lib/auth";
 
-export default function Overview() {
+export default async function Overview() {
+  const session = await getSession();
+  if (!session?.user || !session.user.isAdmin) {
+    redirect("/app/login");
+  }
+
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
       <div className="flex flex-col space-y-6">
@@ -40,7 +47,7 @@ export default function Overview() {
             </div>
           }
         >
-          <Movies limit={8} />
+          <MovieGallery limit={8} />
         </Suspense>
       </div>
     </div>
