@@ -33,7 +33,7 @@ export async function GET(
   }
   const body = await response.text();
   const { document } = parseHTML(body);
-  const images : any = Array.from(document.querySelectorAll("main img"))
+  const images: any = Array.from(document.querySelectorAll("main img"))
     .map((img) => ({
       srcset: img.getAttribute("srcset") || img.getAttribute("srcSet"), // Linkedom is case-sensitive
       sizes: img.getAttribute("sizes"),

@@ -36,10 +36,7 @@ export async function getHomePageMovies() {
     [`movies-for-site`],
     {
       revalidate: 900,
-      tags: [`movies-for-site`,
-        `movies-list`,
-        `movies-all`
-      ],
+      tags: [`movies-for-site`, `movies-list`, `movies-all`],
     },
   )();
 }
@@ -59,10 +56,7 @@ export async function getHomePageActors() {
     [`actors-for-site`],
     {
       revalidate: 900,
-      tags: [`actors-for-site`,
-        `actors-list`,
-        `actors-all`,
-      ],
+      tags: [`actors-for-site`, `actors-list`, `actors-all`],
     },
   )();
 }
@@ -82,10 +76,7 @@ export async function getHomePageDirectors() {
     [`directors-for-site`],
     {
       revalidate: 900,
-      tags: [`directors-for-site`,
-        `directors-list`,
-        `directors-all`,
-      ],
+      tags: [`directors-for-site`, `directors-list`, `directors-all`],
     },
   )();
 }
@@ -352,9 +343,10 @@ export async function getMovieData(slug: string, session?: any) {
         `post-${slug}`,
         `ratings-${slug}`,
         `reviews-${slug}`,
-        `movies-list`,      // Add list tag
-        `movies-all`        // Add all tag
-      ],    },
+        `movies-list`, // Add list tag
+        `movies-all`, // Add all tag
+      ],
+    },
   )();
 }
 
@@ -391,11 +383,7 @@ export async function getActorDataByName(name: string) {
     [`actor-${name}`],
     {
       revalidate: 900, // 15 minutes
-      tags: [
-        `actor-${name}`,
-        'actors-list',
-        'actors-all'
-      ],
+      tags: [`actor-${name}`, "actors-list", "actors-all"],
     },
   )();
 }
@@ -434,10 +422,7 @@ export async function getDirectorDataByName(name: string) {
     [`director-${name}`],
     {
       revalidate: 900, // 15 minutes
-      tags: [`director-${name}`,
-        'directors-list',
-        'directors-all',
-      ],
+      tags: [`director-${name}`, "directors-list", "directors-all"],
     },
   )();
 }
