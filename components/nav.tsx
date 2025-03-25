@@ -110,6 +110,7 @@ export default function Nav({ children }: { children: ReactNode }) {
         <div className="grid gap-2">
           <div className="flex items-center space-x-2 rounded-lg px-2 py-1.5">
             <Link
+              prefetch={true}
               href="/"
               className="rounded-lg hover:bg-stone-200 dark:hover:bg-stone-700"
             >
@@ -125,6 +126,7 @@ export default function Nav({ children }: { children: ReactNode }) {
           <div className="grid gap-1">
             {tabs.map(({ name, href, isActive, icon }) => (
               <Link
+                prefetch={true}
                 key={name}
                 href={`/app/${href}`}
                 className={`flex items-center space-x-3 ${

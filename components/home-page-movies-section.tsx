@@ -82,6 +82,7 @@ export default async function MoviesSection({ movieData }: MoviesSectionProps) {
                 <div className="grid h-[32rem] grid-cols-1 gap-4 overflow-hidden">
                   {movieData.slice(1, 4).map((metadata: any, _: number) => (
                     <Link
+                      prefetch={true}
                       key={`${metadata.slug}`}
                       href={`/movies/${metadata.slug}`}
                       className="relative block h-[10rem] overflow-hidden rounded-lg"

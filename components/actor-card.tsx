@@ -9,6 +9,7 @@ export default function ActorCard({ data }: { data: SelectActor }) {
   return (
     <div className="relative rounded-lg border border-stone-200 pb-10 shadow-md transition-all hover:shadow-xl dark:border-stone-700 dark:hover:border-white">
       <Link
+        prefetch={true}
         href={`/app/actor/${data.id}`}
         className="flex flex-col overflow-hidden rounded-lg"
       >
@@ -32,6 +33,7 @@ export default function ActorCard({ data }: { data: SelectActor }) {
       </Link>
       <div className="absolute bottom-4 flex w-full px-4">
         <Link
+          prefetch={true}
           href={url}
           target="_blank"
           rel="noreferrer"

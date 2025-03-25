@@ -310,6 +310,7 @@ export default async function ActorPage({
 function MovieCard({ movie }: { movie: any }) {
   return (
     <Link
+      prefetch={true}
       href={`/movies/${movie.slug}`}
       className="group flex flex-col overflow-hidden rounded-lg bg-white shadow-md transition-shadow hover:shadow-lg dark:bg-gray-800"
     >
@@ -347,6 +348,7 @@ function MovieCard({ movie }: { movie: any }) {
 function MovieListItem({ movie }: { movie: any }) {
   return (
     <Link
+      prefetch={true}
       href={`/movies/${movie.slug}`}
       className="group flex items-center space-x-4 rounded-lg p-3 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800/60"
     >
@@ -437,6 +439,7 @@ function Pagination({
         {currentPage > 1 && (
           <li>
             <Link
+              prefetch={true}
               href={getPageLink(currentPage - 1)}
               className="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
             >
@@ -455,6 +458,7 @@ function Pagination({
           ) : (
             <li key={pageNum}>
               <Link
+                prefetch={true}
                 href={getPageLink(pageNum as number)}
                 className={`rounded-md px-3 py-2 text-sm font-medium ${
                   currentPage === pageNum
@@ -472,6 +476,7 @@ function Pagination({
         {currentPage < totalPages && (
           <li>
             <Link
+              prefetch={true}
               href={getPageLink(currentPage + 1)}
               className="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
             >

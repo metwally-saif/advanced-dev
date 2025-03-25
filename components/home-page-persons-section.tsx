@@ -21,6 +21,7 @@ export default async function PersonsSection({
         <div className="flex space-x-6 overflow-x-auto">
           {personData.map((actor: any, _: number) => (
             <Link
+              prefetch={true}
               key={`${actor.name}`}
               href={`/${type}s/${actor.id}`}
               className="flex w-[100px] flex-shrink-0 flex-col items-center sm:w-[120px] md:w-[200px]"

@@ -78,6 +78,7 @@ export default async function MoviesPage({
             </p>
             {genre && (
               <Link
+                prefetch={true}
                 href="/movies"
                 className="mt-4 inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
               >
@@ -110,6 +111,7 @@ function MovieCard({
 }) {
   return (
     <Link
+      prefetch={true}
       href={`/movies/${movie.slug}`}
       className="group flex flex-col overflow-hidden rounded-lg bg-white shadow-lg transition-shadow duration-300 hover:shadow-xl dark:bg-gray-800"
     >
@@ -222,6 +224,7 @@ function Pagination({
         {/* Previous page button */}
         {currentPage > 1 && (
           <Link
+            prefetch={true}
             href={getPageLink(currentPage - 1)}
             className="rounded-l-md border border-gray-300 bg-white px-3 py-2 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
           >
@@ -232,6 +235,7 @@ function Pagination({
         {/* Page numbers */}
         {[...Array(totalPages)].map((_, i) => (
           <Link
+            prefetch={true}
             key={`page-${i}`}
             href={getPageLink(i + 1)}
             className={`border border-gray-300 px-3 py-2 dark:border-gray-600 ${
@@ -247,6 +251,7 @@ function Pagination({
         {/* Next page button */}
         {currentPage < totalPages && (
           <Link
+            prefetch={true}
             href={getPageLink(currentPage + 1)}
             className="rounded-r-md border border-gray-300 bg-white px-3 py-2 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
           >

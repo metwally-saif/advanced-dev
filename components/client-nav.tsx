@@ -121,6 +121,7 @@ function ClientNav() {
     >
       <div className="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between p-4">
         <Link
+          prefetch={true}
           href="/"
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
@@ -201,6 +202,7 @@ function ClientNav() {
                         </div>
                         {searchResults.movies.map((movie: any) => (
                           <Link
+                            prefetch={true}
                             href={`/movies/${movie.slug}`}
                             key={movie.id}
                             onClick={() => setIsSearchOpen(false)}
@@ -243,6 +245,7 @@ function ClientNav() {
                         </div>
                         {searchResults.actors.map((actor: any) => (
                           <Link
+                            prefetch={true}
                             href={`/actors/${actor.name}`}
                             key={actor.id}
                             onClick={() => setIsSearchOpen(false)}
@@ -280,6 +283,7 @@ function ClientNav() {
                         </div>
                         {searchResults.directors.map((director: any) => (
                           <Link
+                            prefetch={true}
                             href={`/directors/${director.name}`}
                             key={director.id}
                             onClick={() => setIsSearchOpen(false)}
