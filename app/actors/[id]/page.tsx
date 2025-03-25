@@ -9,6 +9,30 @@ import db from "@/lib/db";
 import { actor, movieActors, Movies, ratings, users } from "@/lib/schema";
 import { toDateString } from "@/lib/utils";
 
+export async function generateStaticParams() {
+  try {
+    const allActors = await db
+      .select({
+        id: actor.id,
+      })
+      .from(actor);
+
+    const allPaths = allActors
+      .flatMap(({ id }) => [
+        id && {
+          id: id,
+        },
+      ])
+      .filter(Boolean);
+
+    return allPaths;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error("Error searching movies:", error);
+    return [];
+  }
+}
+
 // Create a specific fetcher for actor data with movies
 async function getActorById(id: string, page: number = 1, limit: number = 5) {
   return await unstable_cache(
