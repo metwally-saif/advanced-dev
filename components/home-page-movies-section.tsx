@@ -1,6 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
 
+import { Link } from "@/components/link";
 import { SelectUser } from "@/lib/schema";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";
 

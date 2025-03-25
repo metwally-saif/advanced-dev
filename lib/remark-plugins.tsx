@@ -1,6 +1,7 @@
-import Link from "next/link";
 import { ReactNode } from "react";
 import { visit } from "unist-util-visit";
+
+import { Link } from "@/components/link";
 
 export function replaceLinks({
   href,

@@ -2,10 +2,10 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 
+import { Link } from "@/components/link";
 import { useDebounce } from "@/lib/hooks/use-debounce";
 import { SelectActor, SelectDirector, SelectMovie } from "@/lib/schema";
 import {

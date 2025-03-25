@@ -3,9 +3,7 @@
  */
 module.exports = {
   experimental: {
-    ppr: true,
     inlineCss: true,
-    reactCompiler: true,
     serverActions: {
       allowedOrigins: ["app.localhost:3000"],
     },

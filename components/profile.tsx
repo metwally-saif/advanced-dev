@@ -1,7 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { Link } from "@/components/link";
 import { getSession } from "@/lib/auth";
 
 import LogoutButton from "./logout-button";

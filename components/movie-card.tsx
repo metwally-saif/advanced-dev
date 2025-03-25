@@ -1,5 +1,4 @@
-import Link from "next/link";
-
+import { Link } from "@/components/link";
 import type { SelectMovie } from "@/lib/schema";
 import { toDateString } from "@/lib/utils";
 

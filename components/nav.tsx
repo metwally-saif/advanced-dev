@@ -11,13 +11,14 @@ import {
   Settings,
 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import {
   useParams,
   usePathname,
   useSelectedLayoutSegments,
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
+
+import { Link } from "@/components/link";
 
 export default function Nav({ children }: { children: ReactNode }) {
   const segments = useSelectedLayoutSegments();

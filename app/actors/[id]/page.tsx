@@ -2,9 +2,9 @@ import { and, desc, eq, sql } from "drizzle-orm";
 import { Star } from "lucide-react";
 import { unstable_cache } from "next/cache";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { Link } from "@/components/link";
 import db from "@/lib/db";
 import { actor, movieActors, Movies, ratings, users } from "@/lib/schema";
 import { toDateString } from "@/lib/utils";

@@ -1,9 +1,9 @@
 /* eslint-disable react/no-array-index-key */
 import { Star, StarHalf } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 
 import ClientGenreFilter from "@/components/client-genre-filter";
+import { Link } from "@/components/link";
 import { getSession } from "@/lib/auth";
 import { getMoviesByRating } from "@/lib/fetchers";
 import { genres } from "@/lib/schema";

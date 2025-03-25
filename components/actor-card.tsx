@@ -1,5 +1,4 @@
-import Link from "next/link";
-
+import { Link } from "@/components/link";
 import type { SelectActor } from "@/lib/schema";
 
 import BlurImage from "./blur-image";

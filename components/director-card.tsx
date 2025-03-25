@@ -1,8 +1,7 @@
-import Link from "next/link";
-
 import type { SelectDirector } from "@/lib/schema";
 
 import BlurImage from "./blur-image";
+import { Link } from "./link";
 
 export default function MovieCard({ data }: { data: SelectDirector }) {
   const url = `/directors/${data.name}`;

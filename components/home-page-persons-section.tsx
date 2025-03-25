@@ -1,6 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
 
+import { Link } from "@/components/link";
 import { SelectActor, SelectDirector } from "@/lib/schema";
 import { placeholderBlurhash } from "@/lib/utils";
 
