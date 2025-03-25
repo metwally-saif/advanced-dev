@@ -36,7 +36,10 @@ export async function getHomePageMovies() {
     [`movies-for-site`],
     {
       revalidate: 900,
-      tags: [`movies-for-site`],
+      tags: [`movies-for-site`,
+        `movies-list`,
+        `movies-all`
+      ],
     },
   )();
 }
@@ -56,7 +59,10 @@ export async function getHomePageActors() {
     [`actors-for-site`],
     {
       revalidate: 900,
-      tags: [`actors-for-site`],
+      tags: [`actors-for-site`,
+        `actors-list`,
+        `actors-all`,
+      ],
     },
   )();
 }
@@ -76,7 +82,10 @@ export async function getHomePageDirectors() {
     [`directors-for-site`],
     {
       revalidate: 900,
-      tags: [`directors-for-site`],
+      tags: [`directors-for-site`,
+        `directors-list`,
+        `directors-all`,
+      ],
     },
   )();
 }
@@ -215,7 +224,7 @@ export async function getMoviesByRating(
     [`movies-by-rating-${page}-${limit}-${genre}-${userId}`],
     {
       revalidate: 900, // 15 minutes
-      tags: [`movies-list`, `ratings-list`],
+      tags: [`movies-list`, `ratings-list`, `movies-all`],
     },
   )();
 }
@@ -339,8 +348,13 @@ export async function getMovieData(slug: string, session?: any) {
     [`post-${slug}`],
     {
       revalidate: 900, // 15 minutes
-      tags: [`post-${slug}`, `ratings-${slug}`, `reviews-${slug}`],
-    },
+      tags: [
+        `post-${slug}`,
+        `ratings-${slug}`,
+        `reviews-${slug}`,
+        `movies-list`,      // Add list tag
+        `movies-all`        // Add all tag
+      ],    },
   )();
 }
 
@@ -377,7 +391,11 @@ export async function getActorDataByName(name: string) {
     [`actor-${name}`],
     {
       revalidate: 900, // 15 minutes
-      tags: [`actor-${name}`],
+      tags: [
+        `actor-${name}`,
+        'actors-list',
+        'actors-all'
+      ],
     },
   )();
 }
@@ -416,7 +434,10 @@ export async function getDirectorDataByName(name: string) {
     [`director-${name}`],
     {
       revalidate: 900, // 15 minutes
-      tags: [`director-${name}`],
+      tags: [`director-${name}`,
+        'directors-list',
+        'directors-all',
+      ],
     },
   )();
 }

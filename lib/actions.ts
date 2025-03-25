@@ -28,10 +28,10 @@ const nanoid = customAlphabet(
   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
   7,
 ); // 7-character random string
-
 const revalidateContent = (
   type: "movie" | "actor" | "director",
   id?: string,
+  slug?: string,
 ) => {
   // Always revalidate homepage
   revalidatePath("/", "page");
@@ -48,10 +48,26 @@ const revalidateContent = (
   if (id) {
     revalidateTag(`${type}-${id}`);
 
+    // For movies with slug, also revalidate slug-based caches
+    if (type === "movie" && slug) {
+      revalidateTag(`post-${slug}`);
+      revalidateTag(`ratings-${slug}`);
+      revalidateTag(`reviews-${slug}`);
+    }
+
     // For movies, also revalidate their relationships
     if (type === "movie") {
       revalidateTag(`movie-${id}-actors`);
       revalidateTag(`movie-${id}-directors`);
+    }
+
+    // For actors/directors, revalidate their movie relationships
+    if (type === "actor") {
+      revalidateTag(`actor-${id}-movies`);
+    }
+
+    if (type === "director") {
+      revalidateTag(`director-${id}-movies`);
     }
   }
 };
@@ -338,7 +354,7 @@ export const createActor = async (
     .returning();
 
   // Comprehensive revalidation
-  revalidateContent("actor", response.id);
+  revalidateContent("actor", response.name as string);
 
   return response;
 };
@@ -361,7 +377,7 @@ export const createDirector = async (
     .returning();
 
   // Comprehensive revalidation
-  revalidateContent("director", response.id);
+  revalidateContent("director", response.name as string);
 
   return response;
 };

@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "drizzle-kit push && next build",
+    "build": "next build",
     "typecheck": "tsc -b tsconfig.json --pretty",
     "schema_sync": "npx drizzle-kit push",
     "format:write": "prettier --write \"**/*.{css,js,json,jsx,ts,tsx}\"",
@@ -32,6 +32,7 @@
     "framer-motion": "^10.18.0",
     "gray-matter": "^4.0.3",
     "js-cookie": "^3.0.5",
+    "linkedom": "^0.18.9",
     "lucide-react": "^0.292.0",
     "nanoid": "^4.0.2",
     "next": "15.2.3",

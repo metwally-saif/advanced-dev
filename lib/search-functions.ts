@@ -24,7 +24,9 @@ export async function searchActorsByName(name: string) {
     try {
       return await unstable_cache(fetchActors, [`search-actors-${name}`], {
         revalidate: 900,
-        tags: [`search-actors-${name}`],
+        tags: [        `search-actors-${name}`,
+          "actors-list",
+          "actors-all"],
       })();
     } catch (cacheError) {
       // If cache fails, just execute the query directly
@@ -54,8 +56,11 @@ export async function searchDirectorsByName(name: string) {
     [`search-directors-${name}`],
     {
       revalidate: 900, // 15 minutes
-      tags: [`search-directors-${name}`],
-    },
+      tags: [
+        `search-directors-${name}`,
+        "directors-list",
+        "directors-all"
+      ],    },
   )();
 }
 
@@ -76,7 +81,10 @@ export async function searchMoviesByTitle(title: string) {
     [`search-movies-${title}`],
     {
       revalidate: 900, // 15 minutes
-      tags: [`search-movies-${title}`],
-    },
+      tags: [
+        `search-movies-${title}`,
+        "movies-list",
+        "movies-all"
+      ],    },
   )();
 }
