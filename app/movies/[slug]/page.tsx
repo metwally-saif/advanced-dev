@@ -11,7 +11,11 @@ import MovieCard from "@/components/movie-card";
 import MovieRating from "@/components/movie-rating";
 import { getSession } from "@/lib/auth";
 import db from "@/lib/db";
-import { getMovieData } from "@/lib/fetchers";
+import {
+  getMovieActors,
+  getMovieData,
+  getMovieDirectors,
+} from "@/lib/fetchers";
 import { Movies } from "@/lib/schema";
 import { toDateString } from "@/lib/utils";
 
@@ -86,6 +90,12 @@ export default async function MovieDetailPage({
     notFound();
   }
 
+  // Fetch actors and directors for this movie
+  const [actors, directors] = await Promise.all([
+    getMovieActors(data.id),
+    getMovieDirectors(data.id),
+  ]);
+
   // Check if current user has already reviewed this movie
   const userHasReviewed = data.reviews.some(
     (review: any) => review.user.id === session?.user?.id,
@@ -131,6 +141,80 @@ export default async function MovieDetailPage({
       </div>
 
       <div className="m-auto w-full max-w-3xl px-4">
+        {/* Cast & Crew Section */}
+        {((Array.isArray(actors) && actors.length > 0) ||
+          (Array.isArray(directors) && directors.length > 0)) && (
+          <div className="mb-16">
+            <h2 className="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">
+              Cast & Crew
+            </h2>
+
+            {/* Actors Section */}
+            {Array.isArray(actors) && actors.length > 0 && (
+              <div className="mb-8">
+                <h3 className="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-200">
+                  Actors
+                </h3>
+                <div className="flex space-x-4 overflow-x-auto pb-4">
+                  {actors.map((actor) => (
+                    <div key={actor.id} className="flex-shrink-0">
+                      <a href={`/actors/${actor.id}`} className="block">
+                        <div className="flex flex-col items-center">
+                          <div className="h-24 w-24 overflow-hidden rounded-full">
+                            <BlurImage
+                              src={actor.image || "/placeholder-actor.jpg"}
+                              alt={actor.name || "Actor"}
+                              width={96}
+                              height={96}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                          <span className="mt-2 text-center text-sm font-medium text-gray-900 dark:text-gray-100">
+                            {actor.name}
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Directors Section */}
+            {Array.isArray(directors) && directors.length > 0 && (
+              <div>
+                <h3 className="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-200">
+                  Directors
+                </h3>
+                <div className="flex space-x-4 overflow-x-auto pb-4">
+                  {directors.map((director) => (
+                    <div key={director.id} className="flex-shrink-0">
+                      <a href={`/directors/${director.id}`} className="block">
+                        <div className="flex flex-col items-center">
+                          <div className="h-24 w-24 overflow-hidden rounded-full">
+                            <BlurImage
+                              src={
+                                director.image || "/placeholder-director.jpg"
+                              }
+                              alt={director.name || "Director"}
+                              width={96}
+                              height={96}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                          <span className="mt-2 text-center text-sm font-medium text-gray-900 dark:text-gray-100">
+                            {director.name}
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         <MDX source={data.mdxSource} />
 
         {/* Reviews section */}
