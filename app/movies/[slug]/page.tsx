@@ -92,8 +92,8 @@ export default async function MovieDetailPage({
 
   // Fetch actors and directors for this movie
   const [actors, directors] = await Promise.all([
-    getMovieActors(data.id),
-    getMovieDirectors(data.id),
+    getMovieActors(data.id!),
+    getMovieDirectors(data.id!),
   ]);
 
   // Check if current user has already reviewed this movie
